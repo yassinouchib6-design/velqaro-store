@@ -1,0 +1,41 @@
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.Python
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+backups/
+staticfiles/
+local_settings.py
+*.log
+
+# Node / frontend tooling (in case any gets added later)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Build / packaging output
+build/
+dist/
+*.egg
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

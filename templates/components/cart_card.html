@@ -1,0 +1,48 @@
+<article class="cart-card cart-line velqaro-cart-item">
+    <a class="cart-item-media" href="{% url 'shop:product_detail' item.product.slug %}" aria-label="Voir {{ item.product.name }}">
+        {% if item.product.main_image %}
+            <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}" loading="lazy">
+        {% else %}
+            <span class="image-placeholder">VELQARO</span>
+        {% endif %}
+    </a>
+
+    <div class="cart-item-main">
+        <p class="cart-item-category">{{ item.product.category.name }}</p>
+        <h2><a href="{% url 'shop:product_detail' item.product.slug %}">{{ item.product.name }}</a></h2>
+        <p class="cart-item-meta">{{ item.product.material }} / {{ item.product.color }}</p>
+        <div class="cart-item-stock">
+            {% if item.product.in_stock %}
+                Disponible - {{ item.product.stock }} pieces
+            {% else %}
+                Rupture
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="cart-item-actions">
+        <div class="cart-item-price">
+            <span>Prix unite</span>
+            <strong>{{ item.product.price }} DH</strong>
+        </div>
+
+        <form method="post" action="{% url 'shop:cart' %}" class="quantity-selector cart-quantity" data-quantity-form>
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="product_id" value="{{ item.product.id }}">
+            {% include "components/quantity_selector.html" with input_name="quantity" min_value=1 max_value=item.product.stock value=item.quantity label="Quantite" apply_label="Mettre a jour" %}
+        </form>
+
+        <div class="cart-item-subtotal">
+            <span>Sous-total</span>
+            <strong>{{ item.subtotal }} DH</strong>
+        </div>
+
+        <form method="post" action="{% url 'shop:cart' %}" class="cart-remove-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="remove">
+            <input type="hidden" name="product_id" value="{{ item.product.id }}">
+            <button class="cart-remove" type="submit" aria-label="Supprimer {{ item.product.name }}">Supprimer</button>
+        </form>
+    </div>
+</article>

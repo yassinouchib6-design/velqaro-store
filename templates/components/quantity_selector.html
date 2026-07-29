@@ -1,0 +1,7 @@
+<label class="sr-only" {% if input_id %}for="{{ input_id }}"{% endif %}>{{ label|default:"Quantite" }}</label>
+<button class="qty-button" type="button" data-qty-step="-1" aria-label="Diminuer la quantite">-</button>
+<input {% if input_id %}id="{{ input_id }}"{% endif %} type="number" name="{{ input_name|default:'quantity' }}" min="{{ min_value|default:1 }}" max="{{ max_value }}" value="{{ value|default:1 }}" data-qty-input aria-label="{{ label|default:'Quantite' }}">
+<button class="qty-button" type="button" data-qty-step="1" aria-label="Augmenter la quantite">+</button>
+{% if apply_label %}
+    <button class="qty-apply" type="submit">{{ apply_label }}</button>
+{% endif %}

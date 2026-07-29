@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Panier | VELQARO{% endblock %}
+{% block body_class %}store-page cart-page{% endblock %}
+
+{% block content %}
+<section class="page-head reveal">
+    {% include "components/section_title.html" with kicker="Commande" title="Votre panier" subtitle="Verifiez vos articles avant de finaliser votre commande." %}
+</section>
+
+{% if cart_items %}
+    <section class="cart-layout velqaro-cart reveal">
+        <div class="cart-items">
+            <div class="commerce-panel-head cart-panel-head">
+                <span>Articles s&eacute;lectionn&eacute;s</span>
+                <strong>{{ cart_count }}</strong>
+            </div>
+            {% for item in cart_items %}
+                {% include "components/cart_card.html" with item=item %}
+            {% endfor %}
+        </div>
+
+        {% include "components/summary_card.html" with mode="cart" cart=cart cart_count=cart_count tone="cart-summary" %}
+    </section>
+{% else %}
+    {% url 'shop:product_list' as collection_url %}
+    {% include "components/empty_state.html" with kicker="Panier" title="Votre panier est vide." message="Selectionnez une piece VELQARO et revenez ici pour finaliser votre commande." cta_url=collection_url cta_label="Decouvrir la collection" %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,9 @@
+<div class="field-block {% if wide %}field-wide{% endif %}">
+    <label>
+        <span>{{ field.label }}</span>
+        {{ field }}
+    </label>
+    {% if field.errors %}
+        <div class="field-error">{{ field.errors }}</div>
+    {% endif %}
+</div>

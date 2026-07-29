@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Page introuvable | VELQARO{% endblock %}
+{% block body_class %}store-page error-page{% endblock %}
+
+{% block content %}
+{% url 'shop:product_list' as collection_url %}
+{% include "components/empty_state.html" with kicker="404" title="Page introuvable." message="La page demandee n'existe pas ou a ete deplacee." cta_url=collection_url cta_label="Retour a la collection" %}
+{% endblock %}

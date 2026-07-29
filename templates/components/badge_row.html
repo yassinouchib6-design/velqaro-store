@@ -1,0 +1,5 @@
+<div class="badge-row">
+    {% if product.is_featured %}<span class="badge">Bestseller</span>{% endif %}
+    {% if not product.is_featured and not product.old_price %}<span class="badge badge-new">Nouveau</span>{% endif %}
+    <span class="badge badge-soft">{% if product.in_stock %}Disponible{% else %}Rupture{% endif %}</span>
+</div>

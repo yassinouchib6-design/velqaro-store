@@ -1,0 +1,9 @@
+{% load static %}
+<a class="category-card" href="{% url 'shop:product_list' %}?category={{ category_slug }}">
+    <img src="{% static image_path %}" alt="{{ alt }}" loading="lazy">
+    <div>
+        <span>{{ title }}</span>
+        <p>{{ description }}</p>
+        <em>Explorer</em>
+    </div>
+</a>

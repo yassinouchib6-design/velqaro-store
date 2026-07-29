@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Commande confirmee | VELQARO{% endblock %}
+{% block body_class %}store-page success-page{% endblock %}
+
+{% block content %}
+<section class="success-panel reveal">
+    <div class="success-mark" aria-hidden="true"></div>
+    <p class="eyebrow">Merci</p>
+    <h1>Commande re&ccedil;ue</h1>
+    <p>Votre num&eacute;ro de commande est <strong>{{ summary.order_number }}</strong>.</p>
+    <p class="success-note">Nous vous contacterons pour confirmer les d&eacute;tails de livraison.</p>
+    {% include "components/summary_card.html" with mode="success" summary=summary tone="soft" %}
+    <a class="button button-dark" href="{% url 'shop:product_list' %}">Retour au shop</a>
+</section>
+{% endblock %}

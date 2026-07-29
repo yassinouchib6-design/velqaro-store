@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | VELQARO{% endblock %}
+{% block body_class %}store-page checkout-page{% endblock %}
+
+{% block content %}
+<section class="page-head reveal">
+    {% include "components/section_title.html" with kicker="Paiement a la livraison" title="Finaliser la commande" subtitle="Une experience claire, rapide et securisee. Nous vous contactons pour confirmer." %}
+</section>
+
+<section class="checkout-layout reveal">
+    <form class="checkout-form" method="post" action="{% url 'shop:checkout' %}">
+        <div class="commerce-panel-head">
+            <span>Informations</span>
+            <strong>Livraison</strong>
+        </div>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {{ form.checkout_token }}
+        <div class="form-grid">
+            {% include "components/field.html" with field=form.full_name %}
+            {% include "components/field.html" with field=form.phone %}
+            {% include "components/field.html" with field=form.city %}
+            {% include "components/field.html" with field=form.address wide=1 %}
+            {% include "components/field.html" with field=form.note wide=1 %}
+        </div>
+        <button class="button button-dark button-full" type="submit">Confirmer la commande</button>
+    </form>
+
+    {% include "components/summary_card.html" with mode="checkout" cart=cart cart_items=cart_items %}
+</section>
+{% endblock %}

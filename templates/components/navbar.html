@@ -1,0 +1,26 @@
+<header class="site-header" data-header>
+    <div class="nav-shell">
+        <a class="brand" href="{% url 'shop:home' %}" aria-label="VELQARO home">
+            <span>VELQARO</span>
+        </a>
+
+        <button class="icon-button menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" data-menu-toggle>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="main-nav" aria-label="Navigation principale" data-mobile-menu>
+            <a href="{% url 'shop:home' %}">Accueil</a>
+            <a href="{% url 'shop:product_list' %}">Boutique</a>
+            <a href="{% url 'shop:product_list' %}?category=bracelets">Bracelets</a>
+            <a href="{% url 'shop:product_list' %}?category=chains">Chaines</a>
+            <a href="{% url 'shop:product_list' %}?category=packs">Packs</a>
+            <a href="#contact">Contact</a>
+        </nav>
+
+        <a class="cart-pill" href="{% url 'shop:cart' %}" aria-label="Panier">
+            <span class="cart-pill-label">Panier</span>
+            <span class="cart-pill-count" data-cart-count>{{ cart_count }}</span>
+        </a>
+    </div>
+</header>

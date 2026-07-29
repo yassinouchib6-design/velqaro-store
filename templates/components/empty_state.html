@@ -1,0 +1,8 @@
+<section class="empty-state reveal">
+    {% if kicker %}<p class="eyebrow">{{ kicker }}</p>{% endif %}
+    <h2>{{ title }}</h2>
+    {% if message %}<p>{{ message }}</p>{% endif %}
+    {% if cta_url and cta_label %}
+        <a class="button button-dark" href="{{ cta_url }}">{{ cta_label }}</a>
+    {% endif %}
+</section>

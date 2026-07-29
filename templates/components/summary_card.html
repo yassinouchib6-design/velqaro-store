@@ -1,0 +1,33 @@
+<aside class="summary summary-card {% if tone %}{{ tone }}{% endif %}">
+    {% if mode == "cart" %}
+        <span class="summary-label">Recapitulatif</span>
+        <p>Articles <strong>{{ cart_count }}</strong></p>
+        <p>Sous-total <strong>{{ cart.subtotal }} DH</strong></p>
+        <p>Livraison <strong>{{ cart.delivery_fee }} DH</strong></p>
+        <p class="summary-total">Total <strong>{{ cart.total }} DH</strong></p>
+        <a class="button button-dark button-full" href="{% url 'shop:checkout' %}">Passer la commande</a>
+        <a class="summary-link" href="{% url 'shop:product_list' %}">Continuer mes achats</a>
+        <div class="cart-trust">
+            <div><span>01</span>Paiement a la livraison</div>
+            <div><span>02</span>Livraison partout au Maroc</div>
+            <div><span>03</span>Commande confirmee par telephone</div>
+        </div>
+    {% elif mode == "checkout" %}
+        <span class="summary-label">Votre selection</span>
+        {% for item in cart_items %}
+            <p>{{ item.product.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} DH</strong></p>
+        {% endfor %}
+        <p>Sous-total <strong>{{ cart.subtotal }} DH</strong></p>
+        <p>Livraison <strong>{{ cart.delivery_fee }} DH</strong></p>
+        <p class="summary-total">Total <strong>{{ cart.total }} DH</strong></p>
+        <small>Votre commande sera validee apres confirmation.</small>
+    {% elif mode == "success" %}
+        <span class="summary-label">Recapitulatif</span>
+        {% for item in summary.items %}
+            <p>{{ item.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} DH</strong></p>
+        {% endfor %}
+        <p>Sous-total <strong>{{ summary.subtotal }} DH</strong></p>
+        <p>Livraison <strong>{{ summary.delivery_fee }} DH</strong></p>
+        <p class="summary-total">Total <strong>{{ summary.total }} DH</strong></p>
+    {% endif %}
+</aside>

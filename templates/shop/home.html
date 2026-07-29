@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}VELQARO | Bijoux homme{% endblock %}
+{% block body_class %}home-page{% endblock %}
+
+{% block content %}
+<section class="hero luxury-hero reveal">
+    <img class="hero-image" src="{% static 'img/velqaro-hero.png' %}" alt="Accessoires masculins VELQARO en acier et gunmetal">
+    <div class="hero-shade"></div>
+    <div class="hero-copy">
+        <p class="eyebrow">Accessoires masculins premium</p>
+        <h1>Affirmez votre style</h1>
+        <p>Des accessoires masculins con&ccedil;us pour ceux qui imposent leur pr&eacute;sence.</p>
+        <div class="hero-actions">
+            <a class="button button-light" href="{% url 'shop:product_list' %}">D&eacute;couvrir la collection</a>
+            <a class="button button-ghost" href="#featured">Voir les nouveaut&eacute;s</a>
+        </div>
+    </div>
+</section>
+
+<section id="collection" class="category-overlap reveal">
+    <div class="category-grid">
+        {% include "components/category_card.html" with category_slug="bracelets" image_path="img/category-bracelets.png" alt="Bracelets VELQARO" title="Bracelets" description="Acier 316L, lignes nettes, presence quotidienne." %}
+        {% include "components/category_card.html" with category_slug="chains" image_path="img/category-chains.png" alt="Chaines VELQARO" title="Chaines" description="Mailles puissantes, finitions silver et gunmetal." %}
+        {% include "components/category_card.html" with category_slug="packs" image_path="img/category-rings.png" alt="Packs VELQARO" title="Packs" description="Combinaisons premium pour un style complet." %}
+    </div>
+</section>
+
+<section id="featured" class="featured-editorial reveal">
+    <div class="editorial-copy">
+        <p class="section-kicker">Featured Collection</p>
+        <h2>Pi&egrave;ces con&ccedil;ues pour durer.</h2>
+        <p>VELQARO travaille une silhouette masculine: pr&eacute;cise, sobre, premium. Chaque accessoire est choisi pour sa mati&egrave;re, son poids visuel et sa capacit&eacute; &agrave; &eacute;lever une tenue.</p>
+        <div class="slider-controls">
+            <button class="arrow-button" type="button" data-slider-prev aria-label="Produit precedent">Prev</button>
+            <button class="arrow-button" type="button" data-slider-next aria-label="Produit suivant">Next</button>
+        </div>
+    </div>
+    <div class="featured-slider" data-slider data-featured-products>
+        {% for product in featured_products|default:latest_products %}
+            {% include "components/product_card.html" with product=product show_form=1 next_url=request.get_full_path %}
+        {% empty %}
+            {% include "components/empty_state.html" with title="Collection en preparation." message="Aucun produit actif pour le moment." %}
+        {% endfor %}
+    </div>
+</section>
+
+<section class="dark-luxury reveal">
+    <div class="dark-intro">
+        <p class="eyebrow">Bestsellers & Packs</p>
+        <h2>La s&eacute;lection qui porte la signature VELQARO.</h2>
+    </div>
+    <div class="dark-rail">
+        {% for product in latest_products|slice:":4" %}
+            <article class="dark-card">
+                <a href="{% url 'shop:product_detail' product.slug %}" class="dark-media">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                        <span class="image-placeholder">VELQARO</span>
+                    {% endif %}
+                </a>
+                <div>
+                    <span>{{ product.category.name }}</span>
+                    <h3><a href="{% url 'shop:product_detail' product.slug %}">{{ product.name }}</a></h3>
+                    <strong>{{ product.price }} DH</strong>
+                </div>
+            </article>
+        {% empty %}
+            {% include "components/empty_state.html" with title="Selection a venir." message="Ajoutez des produits depuis l'admin pour afficher cette section." %}
+        {% endfor %}
+    </div>
+</section>
+
+<section class="why-section reveal">
+    <div>
+        <p class="eyebrow">Why VELQARO</p>
+        <h2>Le luxe doit rester clair.</h2>
+    </div>
+    <div class="why-grid">
+        <div><span class="benefit-icon">316L</span><strong>Acier inoxydable</strong><p>Finition durable et r&eacute;sistante au quotidien.</p></div>
+        <div><span class="benefit-icon">DH</span><strong>Paiement &agrave; la livraison</strong><p>Commandez maintenant, payez &agrave; r&eacute;ception.</p></div>
+        <div><span class="benefit-icon">MA</span><strong>Livraison partout au Maroc</strong><p>Un service simple, clair et suivi.</p></div>
+        <div><span class="benefit-icon">WA</span><strong>Service WhatsApp</strong><p>Assistance rapide pour choisir votre piece.</p></div>
+    </div>
+</section>
+
+<section class="instagram-section reveal">
+    <p class="eyebrow">Instagram</p>
+    <h2>@velqaro.ma</h2>
+    <div class="instagram-grid" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+    </div>
+</section>
+{% endblock %}
