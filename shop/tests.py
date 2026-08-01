@@ -6,7 +6,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from .models import Category, Order, Product
-from .notifications import send_new_order_notification
+from .notifications import send_new_order_notification, send_new_order_telegram_notification
 
 
 @override_settings(
@@ -14,6 +14,8 @@ from .notifications import send_new_order_notification
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
     DEFAULT_FROM_EMAIL="orders@velqaro.test",
     ORDER_NOTIFICATION_EMAIL="owner@velqaro.test",
+    TELEGRAM_BOT_TOKEN="test-bot-token",
+    TELEGRAM_CHAT_ID="123456",
 )
 class ShopCartOrderTests(TestCase):
     def setUp(self):
@@ -95,8 +97,9 @@ class ShopCartOrderTests(TestCase):
         self.add_to_cart(quantity=2)
         self.client.get(reverse("shop:checkout"))
 
-        with self.captureOnCommitCallbacks(execute=True):
-            self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
+        with patch("shop.notifications.urlopen"):
+            with self.captureOnCommitCallbacks(execute=True):
+                self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
 
         order = Order.objects.get()
         order.refresh_from_db()
@@ -123,16 +126,18 @@ class ShopCartOrderTests(TestCase):
         self.add_to_cart(quantity=1)
         self.client.get(reverse("shop:checkout"))
 
-        with self.captureOnCommitCallbacks(execute=False) as callbacks:
-            self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
+        with patch("shop.notifications.urlopen"):
+            with self.captureOnCommitCallbacks(execute=False) as callbacks:
+                self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
 
-        order = Order.objects.get()
-        self.assertEqual(len(callbacks), 1)
-        self.assertEqual(len(mail.outbox), 0)
-        self.assertIsNone(order.notification_email_sent_at)
+            order = Order.objects.get()
+            self.assertEqual(len(callbacks), 2)
+            self.assertEqual(len(mail.outbox), 0)
+            self.assertIsNone(order.notification_email_sent_at)
 
-        callbacks[0]()
-        order.refresh_from_db()
+            for callback in callbacks:
+                callback()
+            order.refresh_from_db()
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertIsNotNone(order.notification_email_sent_at)
@@ -142,6 +147,70 @@ class ShopCartOrderTests(TestCase):
         self.client.get(reverse("shop:checkout"))
 
         with patch("shop.notifications.send_mail", side_effect=RuntimeError("SMTP down")):
+            with patch("shop.notifications.urlopen"):
+                with self.assertLogs("shop.notifications", level="ERROR"):
+                    with self.captureOnCommitCallbacks(execute=True):
+                        response = self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
+
+        order = Order.objects.get()
+        self.assertRedirects(
+            response,
+            reverse("shop:order_success", kwargs={"order_number": order.order_number}),
+        )
+        self.assertIsNone(order.notification_email_sent_at)
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_successful_checkout_sends_one_telegram_notification(self):
+        self.add_to_cart(quantity=2)
+        self.client.get(reverse("shop:checkout"))
+
+        with patch("shop.notifications.urlopen") as mock_urlopen:
+            with self.captureOnCommitCallbacks(execute=True):
+                self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
+
+        order = Order.objects.get()
+        order.refresh_from_db()
+
+        self.assertEqual(mock_urlopen.call_count, 1)
+        request = mock_urlopen.call_args[0][0]
+        self.assertEqual(request.full_url, "https://api.telegram.org/bottest-bot-token/sendMessage")
+        body = request.data.decode("utf-8")
+        self.assertIn(order.order_number, body)
+        self.assertIn("Ali Ben", body)
+        self.assertIn("0612345678", body)
+        self.assertIn("Casablanca", body)
+        self.assertIn("270.00 DH", body)
+        self.assertIsNotNone(order.telegram_notification_sent_at)
+
+        sent_again = send_new_order_telegram_notification(order.pk)
+
+        self.assertFalse(sent_again)
+        self.assertEqual(mock_urlopen.call_count, 1)
+
+    def test_telegram_notification_is_sent_only_after_transaction_commit(self):
+        self.add_to_cart(quantity=1)
+        self.client.get(reverse("shop:checkout"))
+
+        with patch("shop.notifications.urlopen") as mock_urlopen:
+            with self.captureOnCommitCallbacks(execute=False) as callbacks:
+                self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
+
+            order = Order.objects.get()
+            self.assertEqual(mock_urlopen.call_count, 0)
+            self.assertIsNone(order.telegram_notification_sent_at)
+
+            for callback in callbacks:
+                callback()
+
+        order.refresh_from_db()
+        self.assertEqual(mock_urlopen.call_count, 1)
+        self.assertIsNotNone(order.telegram_notification_sent_at)
+
+    def test_telegram_failure_does_not_block_order_creation(self):
+        self.add_to_cart(quantity=1)
+        self.client.get(reverse("shop:checkout"))
+
+        with patch("shop.notifications.urlopen", side_effect=OSError("Telegram unreachable")):
             with self.assertLogs("shop.notifications", level="ERROR"):
                 with self.captureOnCommitCallbacks(execute=True):
                     response = self.client.post(reverse("shop:checkout"), self.valid_checkout_payload())
@@ -151,8 +220,7 @@ class ShopCartOrderTests(TestCase):
             response,
             reverse("shop:order_success", kwargs={"order_number": order.order_number}),
         )
-        self.assertIsNone(order.notification_email_sent_at)
-        self.assertEqual(len(mail.outbox), 0)
+        self.assertIsNone(order.telegram_notification_sent_at)
 
     def test_order_number_is_generated(self):
         order = Order.objects.create(

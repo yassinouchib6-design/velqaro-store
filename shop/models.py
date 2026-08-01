@@ -105,6 +105,7 @@ class Order(models.Model):
     )
     tracking_number = models.CharField(max_length=80, blank=True)
     notification_email_sent_at = models.DateTimeField(blank=True, editable=False, null=True)
+    telegram_notification_sent_at = models.DateTimeField(blank=True, editable=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
