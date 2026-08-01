@@ -16,8 +16,12 @@ def home(request):
     featured_products = Product.objects.filter(
         is_active=True,
         is_featured=True,
+        category__is_active=True,
     ).select_related("category")[:6]
-    latest_products = Product.objects.filter(is_active=True).select_related("category")[:8]
+    latest_products = Product.objects.filter(
+        is_active=True,
+        category__is_active=True,
+    ).select_related("category")[:8]
     categories = Category.objects.filter(is_active=True)
     return render(
         request,
@@ -32,7 +36,10 @@ def home(request):
 
 def product_list(request):
     categories = Category.objects.filter(is_active=True)
-    products = Product.objects.filter(is_active=True).select_related("category")
+    products = Product.objects.filter(
+        is_active=True,
+        category__is_active=True,
+    ).select_related("category")
     selected_category = (request.GET.get("category") or "").strip()
     if selected_category:
         products = products.filter(category__slug=selected_category, category__is_active=True)
@@ -52,6 +59,7 @@ def product_detail(request, slug):
         Product.objects.select_related("category").prefetch_related("images"),
         slug=slug,
         is_active=True,
+        category__is_active=True,
     )
     return render(request, "shop/product_detail.html", {"product": product})
 
