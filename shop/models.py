@@ -39,7 +39,10 @@ class Product(models.Model):
     color = models.CharField(max_length=80)
     stock = models.PositiveIntegerField(default=0)
     main_image = models.ImageField(upload_to="products/main/", blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Active products are shown on the storefront. Archive a product instead of deleting it to keep historical orders intact.",
+    )
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

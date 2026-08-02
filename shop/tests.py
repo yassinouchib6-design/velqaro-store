@@ -1,11 +1,15 @@
 from decimal import Decimal
 from unittest.mock import patch
 
+from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 
-from .models import Category, Order, Product
+from .admin import ProductAdmin, archive_products, restore_products
+from .models import Category, Order, OrderItem, Product
 from .notifications import send_new_order_notification, send_new_order_telegram_notification
 
 
@@ -267,3 +271,94 @@ class ShopCartOrderTests(TestCase):
         self.assertContains(response, "Stock insuffisant")
         self.assertEqual(Order.objects.count(), 0)
         self.assertEqual(self.product.stock, 1)
+
+
+class ProductArchiveTests(TestCase):
+    def setUp(self):
+        self.category = Category.objects.create(name="Bracelets", slug="bracelets")
+        self.product = Product.objects.create(
+            category=self.category,
+            name="Bracelet Noir",
+            slug="bracelet-noir",
+            short_description="Bracelet minimal.",
+            description="Bracelet homme.",
+            price=Decimal("120.00"),
+            material="Steel",
+            color="Gunmetal",
+            stock=3,
+            is_active=True,
+            is_featured=True,
+        )
+        self.admin = ProductAdmin(Product, admin.site)
+
+    def _admin_request(self, user=None):
+        request = RequestFactory().get("/admin/shop/product/")
+        request.session = {}
+        request._messages = FallbackStorage(request)
+        request.user = user
+        return request
+
+    def test_archive_action_hides_product_from_storefront(self):
+        response = self.client.get(reverse("shop:product_list"))
+        self.assertContains(response, "Bracelet Noir")
+
+        archive_products(self.admin, self._admin_request(), Product.objects.filter(pk=self.product.pk))
+        self.product.refresh_from_db()
+
+        self.assertFalse(self.product.is_active)
+        self.assertFalse(self.product.is_featured)
+
+        response = self.client.get(reverse("shop:product_list"))
+        self.assertNotContains(response, "Bracelet Noir")
+        self.assertEqual(
+            self.client.get(reverse("shop:product_detail", args=[self.product.slug])).status_code,
+            404,
+        )
+
+    def test_restore_action_shows_product_on_storefront_again(self):
+        self.product.is_active = False
+        self.product.save(update_fields=["is_active"])
+
+        restore_products(self.admin, self._admin_request(), Product.objects.filter(pk=self.product.pk))
+        self.product.refresh_from_db()
+
+        self.assertTrue(self.product.is_active)
+        response = self.client.get(reverse("shop:product_list"))
+        self.assertContains(response, "Bracelet Noir")
+
+    def test_admin_still_shows_archived_products(self):
+        self.product.is_active = False
+        self.product.save(update_fields=["is_active"])
+
+        self.assertIn(self.product, Product.objects.all())
+
+    def test_cannot_delete_product_referenced_by_order_items(self):
+        order = Order.objects.create(
+            full_name="Ali Ben",
+            phone="0612345678",
+            city="Casablanca",
+            address="12 Rue Test",
+            subtotal=Decimal("120.00"),
+            delivery_fee=Decimal("30.00"),
+            total=Decimal("150.00"),
+        )
+        OrderItem.objects.create(
+            order=order,
+            product=self.product,
+            product_name=self.product.name,
+            unit_price=self.product.price,
+            quantity=1,
+            subtotal=self.product.price,
+        )
+
+        self.assertFalse(self.admin.has_delete_permission(self._admin_request(), obj=self.product))
+
+    def test_can_delete_product_with_no_order_history(self):
+        User = get_user_model()
+        superuser = User.objects.create_superuser(
+            username="owner", email="owner@velqaro.test", password="pass1234"
+        )
+
+        self.assertTrue(
+            self.admin.has_delete_permission(self._admin_request(user=superuser), obj=self.product)
+        )
