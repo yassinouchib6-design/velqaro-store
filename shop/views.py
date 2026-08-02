@@ -4,12 +4,18 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .cart import Cart
 from .forms import CheckoutForm
 from .models import Category, Product
 from .services import create_order_from_cart
+
+# Old category slugs kept for backward-compatible redirects after renames.
+LEGACY_CATEGORY_SLUGS = {
+    "chains": "portefeuilles",
+}
 
 
 def home(request):
@@ -35,12 +41,16 @@ def home(request):
 
 
 def product_list(request):
+    selected_category = (request.GET.get("category") or "").strip()
+    if selected_category in LEGACY_CATEGORY_SLUGS:
+        new_slug = LEGACY_CATEGORY_SLUGS[selected_category]
+        return redirect(f"{reverse('shop:product_list')}?category={new_slug}", permanent=True)
+
     categories = Category.objects.filter(is_active=True)
     products = Product.objects.filter(
         is_active=True,
         category__is_active=True,
     ).select_related("category")
-    selected_category = (request.GET.get("category") or "").strip()
     if selected_category:
         products = products.filter(category__slug=selected_category, category__is_active=True)
     return render(

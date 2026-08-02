@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     CATEGORY_SPECS = {
         "Bracelets": {"slug": "bracelets", "count": 15},
-        "Chains": {"slug": "chains", "count": 15},
+        "Portefeuilles": {"slug": "portefeuilles", "count": 15},
         "Rings": {"slug": "rings", "count": 10},
         "Packs": {"slug": "packs", "count": 10},
     }
@@ -87,7 +87,7 @@ class Command(BaseCommand):
 
     NAME_MAP = {
         "Bracelets": BRACELET_NAMES,
-        "Chains": CHAIN_NAMES,
+        "Portefeuilles": CHAIN_NAMES,
         "Rings": RING_NAMES,
         "Packs": PACK_NAMES,
     }
@@ -263,7 +263,7 @@ class Command(BaseCommand):
         }
 
     def _group_images(self, paths):
-        grouped = {"bracelets": [], "chains": [], "rings": [], "packs": [], "all": []}
+        grouped = {"bracelets": [], "portefeuilles": [], "rings": [], "packs": [], "all": []}
         for path in paths:
             if not path.is_file():
                 continue
@@ -275,7 +275,7 @@ class Command(BaseCommand):
             if "bracelet" in lower_name:
                 grouped["bracelets"].append(relative)
             elif "chaine" in lower_name or "chain" in lower_name:
-                grouped["chains"].append(relative)
+                grouped["portefeuilles"].append(relative)
             elif "bague" in lower_name or "ring" in lower_name:
                 grouped["rings"].append(relative)
             elif "pack" in lower_name or "hero" in lower_name:

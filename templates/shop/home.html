@@ -6,7 +6,9 @@
 
 {% block content %}
 <section class="hero luxury-hero reveal">
-    <img class="hero-image" src="{% static 'img/velqaro-hero.png' %}" alt="Accessoires masculins VELQARO en acier et gunmetal">
+    <div class="hero-media" data-parallax>
+        <img class="hero-image" src="{% static 'img/velqaro-hero.png' %}" alt="Accessoires masculins VELQARO en acier et gunmetal">
+    </div>
     <div class="hero-shade"></div>
     <div class="hero-copy">
         <p class="eyebrow">Accessoires masculins premium</p>
@@ -22,7 +24,7 @@
 <section id="collection" class="category-overlap reveal">
     <div class="category-grid">
         {% include "components/category_card.html" with category_slug="bracelets" image_path="img/category-bracelets.png" alt="Bracelets VELQARO" title="Bracelets" description="Acier 316L, lignes nettes, presence quotidienne." %}
-        {% include "components/category_card.html" with category_slug="chains" image_path="img/category-chains.png" alt="Chaines VELQARO" title="Chaines" description="Mailles puissantes, finitions silver et gunmetal." %}
+        {% include "components/category_card.html" with category_slug="portefeuilles" image_path="img/category-chains.png" alt="Portefeuilles VELQARO" title="Portefeuilles" description="Mailles puissantes, finitions silver et gunmetal." %}
         {% include "components/category_card.html" with category_slug="packs" image_path="img/category-rings.png" alt="Packs VELQARO" title="Packs" description="Combinaisons premium pour un style complet." %}
     </div>
 </section>
