@@ -14,7 +14,7 @@ from .services import create_order_from_cart
 
 # Old category slugs kept for backward-compatible redirects after renames.
 LEGACY_CATEGORY_SLUGS = {
-    "chains": "portefeuilles",
+    "chains": "chaines",
 }
 
 
