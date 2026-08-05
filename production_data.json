@@ -1,0 +1,680 @@
+[
+{
+  "model": "shop.category",
+  "pk": 1,
+  "fields": {
+    "name": "Bracelets",
+    "slug": "bracelets",
+    "is_active": true,
+    "created_at": "2026-07-19T00:40:34.408Z"
+  }
+},
+{
+  "model": "shop.category",
+  "pk": 2,
+  "fields": {
+    "name": "Portefeuilles",
+    "slug": "portefeuilles",
+    "is_active": true,
+    "created_at": "2026-07-19T00:40:34.411Z"
+  }
+},
+{
+  "model": "shop.category",
+  "pk": 4,
+  "fields": {
+    "name": "Packs",
+    "slug": "packs",
+    "is_active": true,
+    "created_at": "2026-07-19T00:40:34.412Z"
+  }
+},
+{
+  "model": "shop.category",
+  "pk": 10,
+  "fields": {
+    "name": "Chaînes",
+    "slug": "chaines",
+    "is_active": true,
+    "created_at": "2026-08-02T17:45:34.214Z"
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 8,
+  "fields": {
+    "category": 1,
+    "name": "Bracelet Vesper Mat",
+    "slug": "bracelet-vesper-mat",
+    "short_description": "Nouveaute VELQARO: Bracelet Vesper Mat avec finition premium et lignes sobres pour le quotidien.",
+    "description": "Avec Bracelet Vesper Mat, VELQARO propose une piece equilibree entre minimalisme et presence. Le 316L Stainless Steel apporte une sensation solide, tandis que la teinte silver donne du relief au poignet ou a la silhouette. Chaque detail est pense pour un usage quotidien elegant.",
+    "price": "257.00",
+    "old_price": null,
+    "material": "316L Stainless Steel",
+    "color": "Silver",
+    "stock": 13,
+    "main_image": "products/main/WhatsApp_Image_2026-07-30_at_21_CKUbniq.40.09.jpeg",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-07-19T00:40:40.282Z",
+    "updated_at": "2026-08-01T19:41:11.660Z"
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 38,
+  "fields": {
+    "category": 1,
+    "name": "Bracelet Apex Gun",
+    "slug": "bracelet-apex-gun",
+    "short_description": "Bracelet Apex Gun avec finition premium et lignes sobres pour le quotidien.",
+    "description": "Best seller de la collection, piece essentielle de la selection VELQARO, Bracelet Apex Gun complete une garde-robe masculine sans surcharge. Son design privilegie la matiere, la ligne et la proportion pour creer une impression de luxe calme.",
+    "price": "166.00",
+    "old_price": "246.00",
+    "material": "316L Stainless Steel",
+    "color": "Silver",
+    "stock": 5,
+    "main_image": "products/main/télécharger_6.jpg",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-07-19T00:50:36.589Z",
+    "updated_at": "2026-08-02T15:56:43.076Z"
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 47,
+  "fields": {
+    "category": 4,
+    "name": "Pack Gunmetal Elite",
+    "slug": "pack-gunmetal-elite",
+    "short_description": "Pack Gunmetal Elite avec finition premium et lignes sobres pour le quotidien.",
+    "description": "Best seller de la collection, avec Pack Gunmetal Elite, VELQARO propose une piece equilibree entre minimalisme et presence. Le 316L Stainless Steel apporte une sensation solide, tandis que la teinte silver donne du relief au poignet ou a la silhouette. Chaque detail est pense pour un usage quotidien elegant.",
+    "price": "205.00",
+    "old_price": null,
+    "material": "316L Stainless Steel",
+    "color": "Silver",
+    "stock": 22,
+    "main_image": "products/main/WhatsApp_Image_2026-07-30_at_21_L1XPmiy.40.09.jpeg",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-07-19T00:50:36.664Z",
+    "updated_at": "2026-08-01T19:31:31.595Z"
+  }
+},
+{
+  "model": "shop.product",
+  "pk": 49,
+  "fields": {
+    "category": 4,
+    "name": "Pack Maison Silver",
+    "slug": "pack-maison-silver",
+    "short_description": "Pack Maison Silver aux details precis, ideal pour un style moderne et affirme.",
+    "description": "Best seller de la collection, pack Maison Silver a ete imagine pour ceux qui veulent un accessoire clair, propre et haut de gamme. La finition gunmetal capte la lumiere avec retenue, et le 316L Stainless Steel conserve son aspect premium au fil des ports.",
+    "price": "239.00",
+    "old_price": null,
+    "material": "316L Stainless Steel",
+    "color": "Gunmetal",
+    "stock": 9,
+    "main_image": "products/main/WhatsApp_Image_2026-07-30_at_21.40.09.jpeg",
+    "is_active": true,
+    "is_featured": true,
+    "created_at": "2026-07-19T00:50:36.668Z",
+    "updated_at": "2026-08-01T19:30:46.086Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 229,
+  "fields": {
+    "product": 8,
+    "image": "products/gallery/WhatsApp_Image_2026-07-30_at_21_UatI8FZ.40.09.jpeg",
+    "alt_text": "Bracelet Vesper Mat detail 1",
+    "created_at": "2026-07-19T00:51:30.292Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 230,
+  "fields": {
+    "product": 8,
+    "image": "products/gallery/WhatsApp_Image_2026-07-30_at_21_dvMkqeu.40.09.jpeg",
+    "alt_text": "Bracelet Vesper Mat detail 2",
+    "created_at": "2026-07-19T00:51:30.292Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 231,
+  "fields": {
+    "product": 8,
+    "image": "products/gallery/WhatsApp_Image_2026-07-30_at_21_51Y9QDY.40.09.jpeg",
+    "alt_text": "Bracelet Vesper Mat detail 3",
+    "created_at": "2026-07-19T00:51:30.292Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 248,
+  "fields": {
+    "product": 38,
+    "image": "products/gallery/Lacoste_mens_bracelet.jpg",
+    "alt_text": "Bracelet Apex Gun detail 1",
+    "created_at": "2026-07-19T00:51:30.307Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 249,
+  "fields": {
+    "product": 38,
+    "image": "products/gallery/Lacoste_Mens_Metropole_Bracelet_in_Black_at_Nordstrom.jpg",
+    "alt_text": "Bracelet Apex Gun detail 2",
+    "created_at": "2026-07-19T00:51:30.308Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 250,
+  "fields": {
+    "product": 38,
+    "image": "products/gallery/WhatsApp_Image_2026-07-30_at_21_d3PedaB.40.09.jpeg",
+    "alt_text": "Bracelet Apex Gun detail 3",
+    "created_at": "2026-07-19T00:51:30.308Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 325,
+  "fields": {
+    "product": 47,
+    "image": "products/gallery/pack-nocturne-duo-gallery-2.jpg",
+    "alt_text": "Pack Gunmetal Elite detail 1",
+    "created_at": "2026-07-19T00:51:30.389Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 326,
+  "fields": {
+    "product": 47,
+    "image": "products/gallery/pack-urban-steel-gallery-1.jpg",
+    "alt_text": "Pack Gunmetal Elite detail 2",
+    "created_at": "2026-07-19T00:51:30.389Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 327,
+  "fields": {
+    "product": 47,
+    "image": "products/gallery/pack-silver-essential-gallery-3.jpg",
+    "alt_text": "Pack Gunmetal Elite detail 3",
+    "created_at": "2026-07-19T00:51:30.390Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 330,
+  "fields": {
+    "product": 49,
+    "image": "products/gallery/WhatsApp_Image_2026-07-30_at_21_9K0mi3M.40.09.jpeg",
+    "alt_text": "Pack Maison Silver detail 1",
+    "created_at": "2026-07-19T00:51:30.394Z"
+  }
+},
+{
+  "model": "shop.productimage",
+  "pk": 331,
+  "fields": {
+    "product": 49,
+    "image": "products/gallery/pack-prestige-316l-gallery-1.jpg",
+    "alt_text": "Pack Maison Silver detail 2",
+    "created_at": "2026-07-19T00:51:30.394Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 14,
+  "fields": {
+    "order_number": "VEL-000014",
+    "full_name": "yassin ouchib",
+    "phone": "0635500156",
+    "city": "Rabat",
+    "address": "qwerty",
+    "note": "",
+    "subtotal": "680.00",
+    "delivery_fee": "30.00",
+    "total": "710.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": "2026-08-03T12:06:41.071Z",
+    "created_at": "2026-08-03T12:06:40.136Z",
+    "updated_at": "2026-08-03T12:06:41.071Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 15,
+  "fields": {
+    "order_number": "VEL-000015",
+    "full_name": "ahned",
+    "phone": "0635500156",
+    "city": "Rabat",
+    "address": "qwerty",
+    "note": "",
+    "subtotal": "239.00",
+    "delivery_fee": "30.00",
+    "total": "269.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": "2026-08-03T12:07:13.517Z",
+    "created_at": "2026-08-03T12:07:12.572Z",
+    "updated_at": "2026-08-03T12:07:13.517Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 16,
+  "fields": {
+    "order_number": "VEL-000016",
+    "full_name": "Yassin Ouchib",
+    "phone": "0634530503",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "257.00",
+    "delivery_fee": "30.00",
+    "total": "287.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": null,
+    "created_at": "2026-08-05T14:49:45.448Z",
+    "updated_at": "2026-08-05T14:49:45.448Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 17,
+  "fields": {
+    "order_number": "VEL-000017",
+    "full_name": "Yassin Ouchib",
+    "phone": "0634530503",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "166.00",
+    "delivery_fee": "30.00",
+    "total": "196.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": null,
+    "created_at": "2026-08-05T14:55:11.602Z",
+    "updated_at": "2026-08-05T14:55:11.602Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 18,
+  "fields": {
+    "order_number": "VEL-000018",
+    "full_name": "Yassin Ouchib",
+    "phone": "0635500156",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "205.00",
+    "delivery_fee": "30.00",
+    "total": "235.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": null,
+    "created_at": "2026-08-05T14:55:36.009Z",
+    "updated_at": "2026-08-05T14:55:36.009Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 19,
+  "fields": {
+    "order_number": "VEL-000019",
+    "full_name": "Yassin Ouchib",
+    "phone": "0634530503",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "166.00",
+    "delivery_fee": "30.00",
+    "total": "196.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": null,
+    "created_at": "2026-08-05T14:57:29.250Z",
+    "updated_at": "2026-08-05T14:57:29.250Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 20,
+  "fields": {
+    "order_number": "VEL-000020",
+    "full_name": "Yassin Ouchib",
+    "phone": "0635500156",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "239.00",
+    "delivery_fee": "30.00",
+    "total": "269.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": "2026-08-05T15:05:33.985Z",
+    "created_at": "2026-08-05T15:05:32.869Z",
+    "updated_at": "2026-08-05T15:05:33.986Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 21,
+  "fields": {
+    "order_number": "VEL-000021",
+    "full_name": "Yassin Ouchib",
+    "phone": "0634530503",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "166.00",
+    "delivery_fee": "0.00",
+    "total": "166.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": null,
+    "created_at": "2026-08-05T16:04:22.941Z",
+    "updated_at": "2026-08-05T16:04:22.941Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 22,
+  "fields": {
+    "order_number": "VEL-000022",
+    "full_name": "Yassin Ouchib",
+    "phone": "0635500156",
+    "city": "Rabat",
+    "address": "Qwert",
+    "note": "",
+    "subtotal": "239.00",
+    "delivery_fee": "0.00",
+    "total": "239.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": "2026-08-05T16:06:25.711Z",
+    "created_at": "2026-08-05T16:06:24.747Z",
+    "updated_at": "2026-08-05T16:06:25.712Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 23,
+  "fields": {
+    "order_number": "VEL-000023",
+    "full_name": "Yassin Ouchib",
+    "phone": "0635500156",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "205.00",
+    "delivery_fee": "0.00",
+    "total": "205.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": null,
+    "created_at": "2026-08-05T16:07:09.413Z",
+    "updated_at": "2026-08-05T16:07:09.413Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 24,
+  "fields": {
+    "order_number": "VEL-000024",
+    "full_name": "Yassin Ouchib",
+    "phone": "0619940725",
+    "city": "Rabat",
+    "address": "Qwert",
+    "note": "",
+    "subtotal": "239.00",
+    "delivery_fee": "0.00",
+    "total": "239.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": "2026-08-05T16:12:42.505Z",
+    "created_at": "2026-08-05T16:12:41.652Z",
+    "updated_at": "2026-08-05T16:12:42.505Z"
+  }
+},
+{
+  "model": "shop.order",
+  "pk": 25,
+  "fields": {
+    "order_number": "VEL-000025",
+    "full_name": "Yassin Ouchib",
+    "phone": "0634530503",
+    "city": "Casablanca",
+    "address": "LOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE\r\nLOT HOFRAT LAKOUASS IMM LAMZOURIA B APPT 09 HORS LAKOUASS SALE",
+    "note": "",
+    "subtotal": "239.00",
+    "delivery_fee": "0.00",
+    "total": "239.00",
+    "status": "new",
+    "tracking_number": "",
+    "notification_email_sent_at": null,
+    "telegram_notification_sent_at": "2026-08-05T17:05:09.636Z",
+    "created_at": "2026-08-05T17:05:08.626Z",
+    "updated_at": "2026-08-05T17:05:09.636Z"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 15,
+  "fields": {
+    "order": 14,
+    "product": 8,
+    "product_name": "Bracelet Vesper Mat",
+    "unit_price": "257.00",
+    "quantity": 2,
+    "subtotal": "514.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 16,
+  "fields": {
+    "order": 14,
+    "product": 38,
+    "product_name": "Bracelet Apex Gun",
+    "unit_price": "166.00",
+    "quantity": 1,
+    "subtotal": "166.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 17,
+  "fields": {
+    "order": 15,
+    "product": 49,
+    "product_name": "Pack Maison Silver",
+    "unit_price": "239.00",
+    "quantity": 1,
+    "subtotal": "239.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 18,
+  "fields": {
+    "order": 16,
+    "product": 8,
+    "product_name": "Bracelet Vesper Mat",
+    "unit_price": "257.00",
+    "quantity": 1,
+    "subtotal": "257.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 19,
+  "fields": {
+    "order": 17,
+    "product": 38,
+    "product_name": "Bracelet Apex Gun",
+    "unit_price": "166.00",
+    "quantity": 1,
+    "subtotal": "166.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 20,
+  "fields": {
+    "order": 18,
+    "product": 47,
+    "product_name": "Pack Gunmetal Elite",
+    "unit_price": "205.00",
+    "quantity": 1,
+    "subtotal": "205.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 21,
+  "fields": {
+    "order": 19,
+    "product": 38,
+    "product_name": "Bracelet Apex Gun",
+    "unit_price": "166.00",
+    "quantity": 1,
+    "subtotal": "166.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 22,
+  "fields": {
+    "order": 20,
+    "product": 49,
+    "product_name": "Pack Maison Silver",
+    "unit_price": "239.00",
+    "quantity": 1,
+    "subtotal": "239.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 23,
+  "fields": {
+    "order": 21,
+    "product": 38,
+    "product_name": "Bracelet Apex Gun",
+    "unit_price": "166.00",
+    "quantity": 1,
+    "subtotal": "166.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 24,
+  "fields": {
+    "order": 22,
+    "product": 49,
+    "product_name": "Pack Maison Silver",
+    "unit_price": "239.00",
+    "quantity": 1,
+    "subtotal": "239.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 25,
+  "fields": {
+    "order": 23,
+    "product": 47,
+    "product_name": "Pack Gunmetal Elite",
+    "unit_price": "205.00",
+    "quantity": 1,
+    "subtotal": "205.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 26,
+  "fields": {
+    "order": 24,
+    "product": 49,
+    "product_name": "Pack Maison Silver",
+    "unit_price": "239.00",
+    "quantity": 1,
+    "subtotal": "239.00"
+  }
+},
+{
+  "model": "shop.orderitem",
+  "pk": 27,
+  "fields": {
+    "order": 25,
+    "product": 49,
+    "product_name": "Pack Maison Silver",
+    "unit_price": "239.00",
+    "quantity": 1,
+    "subtotal": "239.00"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$QgcVyiknt5IJV3DO6G56tB$arPDJjpH/oZourcBMz/Nq7y/ljGH9xJKNxtZ/CtM2m8=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "hp",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-07-19T00:04:55.652Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$g2Rzov0NrjvS4YiBUMO0gp$/OEmpKBBBQPYCFW/F5yk/qS81elsTQG2yqAREDaQIWY=",
+    "last_login": "2026-08-01T19:44:49.041Z",
+    "is_superuser": true,
+    "username": "yassinvelaro",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-07-19T00:43:16.145Z",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]
