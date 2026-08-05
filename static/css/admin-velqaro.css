@@ -1,0 +1,139 @@
+/*
+   VELQARO admin theme.
+   Overrides Django admin's CSS custom properties (defined in
+   admin/css/base.css and admin/css/dark_mode.css) so the whole admin —
+   header, sidebar, tables, forms, buttons, login page — follows the
+   site's black / dark-gray / white palette instead of the default blue.
+   A handful of extra rules below add depth (shadows, rounded "cards",
+   button lift) on top of the recolored variables.
+*/
+
+:root,
+html[data-theme="light"],
+html[data-theme="dark"] {
+    --primary: #333333;
+    --secondary: #1a1a1a;
+    --accent: #b9b9b9;
+    --primary-fg: #ffffff;
+
+    --body-fg: #f0efec;
+    --body-bg: #1c1c1c;
+    --body-quiet-color: #a8a8a8;
+    --body-medium-color: #cfcdc7;
+    --body-loud-color: #ffffff;
+
+    --header-color: #f0efec;
+    --header-branding-color: var(--accent);
+    --header-bg: #101010;
+    --header-link-color: #ffffff;
+
+    --breadcrumbs-fg: #cfcdc7;
+    --breadcrumbs-link-fg: #f0efec;
+    --breadcrumbs-bg: #101010;
+
+    --link-fg: #d9d7d2;
+    --link-hover-color: #ffffff;
+    --link-selected-fg: #b9b9b9;
+
+    --hairline-color: #2e2e2e;
+    --border-color: #3a3a3a;
+
+    --error-fg: #ff8080;
+
+    --message-debug-bg: #4e4e4e;
+    --message-debug-icon: url(/static/admin/img/icon-debug-dark.svg);
+    --message-info-bg: #265895;
+    --message-info-icon: url(/static/admin/img/icon-info-dark.svg);
+    --message-success-bg: #006b1b;
+    --message-success-icon: url(/static/admin/img/icon-yes-dark.svg);
+    --message-warning-bg: #583305;
+    --message-warning-icon: url(/static/admin/img/icon-alert-dark.svg);
+    --message-error-bg: #570808;
+    --message-error-icon: url(/static/admin/img/icon-no-dark.svg);
+
+    --darkened-bg: #141414;
+    --selected-bg: #262626;
+    --selected-row: #3a3220;
+
+    --button-fg: #1a1a1a;
+    --button-bg: #efece6;
+    --button-hover-bg: #ffffff;
+    --default-button-bg: #f0efec;
+    --default-button-hover-bg: #ffffff;
+    --close-button-bg: #3a3a3a;
+    --close-button-hover-bg: #4d4d4d;
+    --delete-button-bg: #b23b3b;
+    --delete-button-hover-bg: #8f2e2e;
+
+    --object-tools-fg: #ffffff;
+    --object-tools-bg: #3a3a3a;
+    --object-tools-hover-bg: #4d4d4d;
+
+    color-scheme: dark;
+}
+
+/* Brand mark: same serif used on the storefront, kept off the rest of
+   the UI so dense tables/forms stay on the legible system font. */
+#site-name a {
+    font-family: "Bodoni 72", "Didot", "Baskerville", "Georgia", serif;
+    letter-spacing: 0.06em;
+}
+
+#header {
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+    position: relative;
+    z-index: 10;
+}
+
+/* Card-style elevation for module/fieldset boxes (change form groups,
+   dashboard app list, related-objects panel). Visual only. */
+.module,
+.dashboard .module {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.login #container {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Buttons: layered shadow + lift, matching the storefront's button feel. */
+.button,
+input[type="submit"],
+input[type="button"],
+.submit-row input,
+a.button {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: background 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.submit-row input:hover,
+a.button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+.button:active,
+input[type="submit"]:active,
+input[type="button"]:active,
+.submit-row input:active,
+a.button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.object-tools a {
+    transition: background 200ms ease, transform 200ms ease;
+}
+
+.object-tools a:hover {
+    transform: translateY(-1px);
+}
+
+/* Subtle row highlight on hover, on top of Django's own striping. */
+#changelist-form #result_list tbody tr:hover {
+    background: var(--selected-bg);
+}

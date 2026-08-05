@@ -3,7 +3,7 @@
         <span class="summary-label">Recapitulatif</span>
         <p>Articles <strong>{{ cart_count }}</strong></p>
         <p>Sous-total <strong>{{ cart.subtotal }} DH</strong></p>
-        <p>Livraison <strong>{{ cart.delivery_fee }} DH</strong></p>
+        <p>Livraison : <strong>Gratuite</strong></p>
         <p class="summary-total">Total <strong>{{ cart.total }} DH</strong></p>
         <a class="button button-dark button-full" href="{% url 'shop:checkout' %}">Passer la commande</a>
         <a class="summary-link" href="{% url 'shop:product_list' %}">Continuer mes achats</a>
@@ -18,7 +18,7 @@
             <p>{{ item.product.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} DH</strong></p>
         {% endfor %}
         <p>Sous-total <strong>{{ cart.subtotal }} DH</strong></p>
-        <p>Livraison <strong>{{ cart.delivery_fee }} DH</strong></p>
+        <p>Livraison : <strong>Gratuite</strong></p>
         <p class="summary-total">Total <strong>{{ cart.total }} DH</strong></p>
         <small>Votre commande sera validee apres confirmation.</small>
     {% elif mode == "success" %}
@@ -27,7 +27,7 @@
             <p>{{ item.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} DH</strong></p>
         {% endfor %}
         <p>Sous-total <strong>{{ summary.subtotal }} DH</strong></p>
-        <p>Livraison <strong>{{ summary.delivery_fee }} DH</strong></p>
+        <p>Livraison : <strong>Gratuite</strong></p>
         <p class="summary-total">Total <strong>{{ summary.total }} DH</strong></p>
     {% endif %}
 </aside>

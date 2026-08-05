@@ -21,13 +21,15 @@
     </div>
 </section>
 
-<section id="collection" class="category-overlap reveal">
-    <div class="category-grid">
-        {% include "components/category_card.html" with category_slug="bracelets" image_path="img/category-bracelets.png" alt="Bracelets VELQARO" title="Bracelets" description="Acier 316L, lignes nettes, presence quotidienne." %}
-        {% include "components/category_card.html" with category_slug="chaines" image_path="img/category-chains.png" alt="Cha&icirc;nes VELQARO" title="Cha&icirc;nes" description="Mailles puissantes, finitions silver et gunmetal." %}
-        {% include "components/category_card.html" with category_slug="packs" image_path="img/category-rings.png" alt="Packs VELQARO" title="Packs" description="Combinaisons premium pour un style complet." %}
-    </div>
-</section>
+{% if category_cards %}
+    <section id="collection" class="category-overlap reveal">
+        <div class="category-grid">
+            {% for category_card in category_cards %}
+                {% include "components/category_card.html" with category_slug=category_card.slug image_path=category_card.image_path alt=category_card.alt title=category_card.title description=category_card.description %}
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
 
 <section id="featured" class="featured-editorial reveal">
     <div class="editorial-copy">

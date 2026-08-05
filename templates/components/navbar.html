@@ -12,10 +12,9 @@
         <nav class="main-nav" aria-label="Navigation principale" data-mobile-menu>
             <a href="{% url 'shop:home' %}">Accueil</a>
             <a href="{% url 'shop:product_list' %}">Boutique</a>
-            <a href="{% url 'shop:product_list' %}?category=bracelets">Bracelets</a>
-            <a href="{% url 'shop:product_list' %}?category=chaines">Cha&icirc;nes</a>
-            <a href="{% url 'shop:product_list' %}?category=portefeuilles">Portefeuilles</a>
-            <a href="{% url 'shop:product_list' %}?category=packs">Packs</a>
+            {% for category in public_categories %}
+                <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+            {% endfor %}
             <a href="#contact">Contact</a>
         </nav>
 

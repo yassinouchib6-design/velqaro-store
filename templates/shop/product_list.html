@@ -12,13 +12,20 @@
     </div>
 </section>
 
+<section class="shop-filters reveal" aria-label="Filtres de collection">
+    <a class="filter-pill {% if not selected_category %}is-active{% endif %}" href="{% url 'shop:product_list' %}">Tout</a>
+    {% for category in categories %}
+        <a class="filter-pill {% if selected_category == category.slug %}is-active{% endif %}" href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+    {% endfor %}
+</section>
+
 <section class="shop-layout product-listing shop-products-section">
     <div class="product-grid">
         {% for product in products %}
             {% include "components/product_card.html" with product=product show_form=1 show_meta=1 next_url=request.get_full_path %}
         {% empty %}
             {% url 'shop:product_list' as collection_url %}
-            {% include "components/empty_state.html" with title="Aucun produit disponible pour le moment." cta_url=collection_url cta_label="Voir toute la collection" %}
+            {% include "components/empty_state.html" with title=empty_title message=empty_message cta_url=collection_url cta_label="Voir toute la collection" %}
         {% endfor %}
     </div>
 </section>

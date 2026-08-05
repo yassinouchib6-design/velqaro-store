@@ -1,5 +1,6 @@
 import json
 import logging
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from django.conf import settings
@@ -14,11 +15,25 @@ logger = logging.getLogger(__name__)
 
 TELEGRAM_API_URL = "https://api.telegram.org/bot{token}/sendMessage"
 TELEGRAM_REQUEST_TIMEOUT = 10
+TELEGRAM_ERROR_BODY_LIMIT = 500
 
 
 def schedule_order_notification(order):
-    transaction.on_commit(lambda: send_new_order_notification(order.pk))
-    transaction.on_commit(lambda: send_new_order_telegram_notification(order.pk))
+    order_id = order.pk
+    order_number = order.order_number
+
+    def send_email_after_commit():
+        logger.warning("TRACE notification callback executed: email order=%s pk=%s", order_number, order_id)
+        return send_new_order_notification(order_id)
+
+    def send_telegram_after_commit():
+        logger.warning("TRACE notification callback executed: telegram order=%s pk=%s", order_number, order_id)
+        return send_new_order_telegram_notification(order_id)
+
+    logger.warning("TRACE notification callback registered: email order=%s pk=%s", order_number, order_id)
+    transaction.on_commit(send_email_after_commit)
+    logger.warning("TRACE notification callback registered: telegram order=%s pk=%s", order_number, order_id)
+    transaction.on_commit(send_telegram_after_commit)
 
 
 def send_new_order_notification(order_id):
@@ -54,36 +69,159 @@ def send_new_order_notification(order_id):
 
 
 def send_new_order_telegram_notification(order_id):
+    logger.warning("TRACE telegram function entered: order_id=%s", order_id)
     try:
         with transaction.atomic():
             order = Order.objects.select_for_update().get(pk=order_id)
             if order.telegram_notification_sent_at:
+                logger.warning("TRACE telegram stopped: order=%s already marked sent.", order.order_number)
                 return False
 
-            bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", "")
-            chat_id = getattr(settings, "TELEGRAM_CHAT_ID", "")
-            if not bot_token or not chat_id:
-                logger.warning("Telegram order notification skipped for order %s: bot token or chat id is not configured.", order.order_number)
-                return False
-
-            payload = json.dumps(
-                {"chat_id": chat_id, "text": build_order_telegram_message(order)}
-            ).encode("utf-8")
-            request = Request(
-                TELEGRAM_API_URL.format(token=bot_token),
-                data=payload,
-                headers={"Content-Type": "application/json"},
-                method="POST",
+            sent = send_telegram_message(
+                build_order_telegram_message(order),
+                context=f"order {order.order_number}",
             )
-            with urlopen(request, timeout=TELEGRAM_REQUEST_TIMEOUT):
-                pass
+            if not sent:
+                logger.warning("TRACE telegram stopped: API send returned False for order=%s.", order.order_number)
+                return False
 
             order.telegram_notification_sent_at = timezone.now()
             order.save(update_fields=["telegram_notification_sent_at", "updated_at"])
+            logger.warning("TRACE telegram timestamp saved: order=%s", order.order_number)
             return True
     except Exception:
         logger.exception("Failed to send Telegram notification for order id %s.", order_id)
         return False
+
+
+def send_telegram_message(text, context="manual test"):
+    bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", "")
+    chat_id = getattr(settings, "TELEGRAM_CHAT_ID", "")
+    logger.warning(
+        "Telegram notification started for %s. token_configured=%s chat_id_configured=%s",
+        context,
+        bool(bot_token),
+        bool(chat_id),
+    )
+    if not bot_token or not chat_id:
+        logger.warning(
+            "Telegram notification skipped for %s: bot token or chat id is not configured.",
+            context,
+        )
+        return False
+
+    payload = json.dumps({"chat_id": chat_id, "text": text}).encode("utf-8")
+    request = Request(
+        TELEGRAM_API_URL.format(token=bot_token),
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    logger.warning("TRACE Telegram API request sent for %s.", context)
+    try:
+        with urlopen(request, timeout=TELEGRAM_REQUEST_TIMEOUT) as response:
+            status_code = _response_status_code(response)
+            response_body = _read_response_text(response)
+    except HTTPError as error:
+        response_body = _read_error_text(error)
+        logger.error(
+            "Telegram notification failed for %s: status_code=%s error=%s",
+            context,
+            error.code,
+            _telegram_error_message(response_body),
+        )
+        logger.warning("TRACE Telegram failure: HTTPError for %s.", context)
+        return False
+    except TimeoutError:
+        logger.exception(
+            "Telegram notification failed for %s: request timed out after %s seconds.",
+            context,
+            TELEGRAM_REQUEST_TIMEOUT,
+        )
+        logger.warning("TRACE Telegram failure: timeout for %s.", context)
+        return False
+    except URLError as error:
+        logger.exception(
+            "Telegram notification failed for %s: network_error=%s",
+            context,
+            _safe_error_text(error.reason),
+        )
+        logger.warning("TRACE Telegram failure: URLError for %s.", context)
+        return False
+    except OSError as error:
+        logger.exception(
+            "Telegram notification failed for %s: network_error=%s",
+            context,
+            _safe_error_text(error),
+        )
+        logger.warning("TRACE Telegram failure: OSError for %s.", context)
+        return False
+
+    if response_body:
+        try:
+            api_response = json.loads(response_body)
+        except json.JSONDecodeError:
+            api_response = {}
+        if api_response.get("ok") is False:
+            logger.error(
+                "Telegram notification failed for %s: status_code=%s error=%s",
+                context,
+                status_code,
+                _telegram_error_message(response_body),
+            )
+            logger.warning("TRACE Telegram failure: API ok=false for %s.", context)
+            return False
+
+    logger.info(
+        "Telegram notification succeeded for %s: status_code=%s",
+        context,
+        status_code,
+    )
+    logger.warning("TRACE Telegram success: context=%s status_code=%s", context, status_code)
+    return True
+
+
+def _response_status_code(response):
+    status_code = getattr(response, "status", None)
+    if isinstance(status_code, int):
+        return status_code
+    getcode = getattr(response, "getcode", None)
+    if callable(getcode):
+        status_code = getcode()
+        if isinstance(status_code, int):
+            return status_code
+    return 200
+
+
+def _read_response_text(response):
+    read = getattr(response, "read", None)
+    if not callable(read):
+        return ""
+    body = read()
+    if isinstance(body, bytes):
+        return body.decode("utf-8", errors="replace")[:TELEGRAM_ERROR_BODY_LIMIT]
+    if isinstance(body, str):
+        return body[:TELEGRAM_ERROR_BODY_LIMIT]
+    return ""
+
+
+def _read_error_text(error):
+    try:
+        return error.read().decode("utf-8", errors="replace")[:TELEGRAM_ERROR_BODY_LIMIT]
+    except Exception:
+        return ""
+
+
+def _telegram_error_message(response_body):
+    try:
+        data = json.loads(response_body)
+    except json.JSONDecodeError:
+        return response_body[:TELEGRAM_ERROR_BODY_LIMIT] or "No response body"
+    return _safe_error_text(data.get("description") or data)
+
+
+def _safe_error_text(error):
+    return str(error).replace("\n", " ")[:TELEGRAM_ERROR_BODY_LIMIT]
 
 
 def build_order_telegram_message(order):
@@ -92,6 +230,7 @@ def build_order_telegram_message(order):
         f"Client: {order.full_name}\n"
         f"Telephone: {order.phone}\n"
         f"Ville: {order.city}\n"
+        f"Livraison : Gratuite\n"
         f"Total: {order.total} DH"
     )
 
@@ -109,6 +248,7 @@ def build_order_notification_body(order):
         f"City: {order.city}\n"
         f"Full address: {order.address}\n"
         f"Ordered products with quantities:\n{ordered_products}\n"
+        f"Livraison : Gratuite\n"
         f"Total amount: {order.total} DH\n"
         f"Order date: {order_date}\n"
     )

@@ -11,10 +11,11 @@ from django.urls import reverse
 from .admin import ProductAdmin, archive_products, restore_products
 from .models import Category, Order, OrderItem, Product
 from .notifications import send_new_order_notification, send_new_order_telegram_notification
+from .services import create_order_from_cart
 
 
 @override_settings(
-    VELQARO_DELIVERY_FEE="30.00",
+    VELQARO_DELIVERY_FEE="0.00",
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
     DEFAULT_FROM_EMAIL="orders@velqaro.test",
     ORDER_NOTIFICATION_EMAIL="owner@velqaro.test",
@@ -58,6 +59,15 @@ class ShopCartOrderTests(TestCase):
             "checkout_token": token,
         }
 
+    def service_checkout_payload(self):
+        return {
+            "full_name": "Ali Ben",
+            "phone": "0612345678",
+            "city": "Casablanca",
+            "address": "12 Rue Test",
+            "note": "",
+        }
+
     def test_add_product_to_cart(self):
         self.add_to_cart(quantity=1)
 
@@ -79,7 +89,8 @@ class ShopCartOrderTests(TestCase):
         cart = response.context["cart"]
 
         self.assertEqual(cart.subtotal, Decimal("240.00"))
-        self.assertEqual(cart.total, Decimal("270.00"))
+        self.assertEqual(cart.delivery_fee, Decimal("0.00"))
+        self.assertEqual(cart.total, Decimal("240.00"))
 
     def test_valid_checkout_creates_order(self):
         self.add_to_cart(quantity=2)
@@ -93,8 +104,8 @@ class ShopCartOrderTests(TestCase):
             reverse("shop:order_success", kwargs={"order_number": order.order_number}),
         )
         self.assertEqual(order.subtotal, Decimal("240.00"))
-        self.assertEqual(order.delivery_fee, Decimal("30.00"))
-        self.assertEqual(order.total, Decimal("270.00"))
+        self.assertEqual(order.delivery_fee, Decimal("0.00"))
+        self.assertEqual(order.total, Decimal("240.00"))
         self.assertEqual(order.items.count(), 1)
 
     def test_successful_checkout_sends_one_order_notification_email(self):
@@ -118,7 +129,8 @@ class ShopCartOrderTests(TestCase):
         self.assertIn("12 Rue Test", mail.outbox[0].body)
         self.assertIn("Bracelet Noir x 2", mail.outbox[0].body)
         self.assertIn("Unit price: 120.00 DH", mail.outbox[0].body)
-        self.assertIn("270.00 DH", mail.outbox[0].body)
+        self.assertIn("Livraison : Gratuite", mail.outbox[0].body)
+        self.assertIn("240.00 DH", mail.outbox[0].body)
         self.assertIsNotNone(order.notification_email_sent_at)
 
         sent_again = send_new_order_notification(order.pk)
@@ -183,7 +195,8 @@ class ShopCartOrderTests(TestCase):
         self.assertIn("Ali Ben", body)
         self.assertIn("0612345678", body)
         self.assertIn("Casablanca", body)
-        self.assertIn("270.00 DH", body)
+        self.assertIn("Livraison : Gratuite", body)
+        self.assertIn("240.00 DH", body)
         self.assertIsNotNone(order.telegram_notification_sent_at)
 
         sent_again = send_new_order_telegram_notification(order.pk)
@@ -210,6 +223,37 @@ class ShopCartOrderTests(TestCase):
         self.assertEqual(mock_urlopen.call_count, 1)
         self.assertIsNotNone(order.telegram_notification_sent_at)
 
+    def test_service_order_registers_telegram_on_commit_callback(self):
+        class ServiceCart:
+            def __init__(self, product):
+                self.product = product
+
+            def as_order_items(self):
+                return [
+                    {
+                        "product": self.product,
+                        "quantity": 1,
+                        "subtotal": self.product.price,
+                    }
+                ]
+
+        with patch("shop.notifications.send_telegram_message", return_value=True) as mock_sender:
+            with self.captureOnCommitCallbacks(execute=False) as callbacks:
+                order = create_order_from_cart(
+                    ServiceCart(self.product),
+                    self.service_checkout_payload(),
+                )
+
+            self.assertEqual(len(callbacks), 2)
+            self.assertEqual(mock_sender.call_count, 0)
+
+            for callback in callbacks:
+                callback()
+
+        order.refresh_from_db()
+        self.assertEqual(mock_sender.call_count, 1)
+        self.assertIsNotNone(order.telegram_notification_sent_at)
+
     def test_telegram_failure_does_not_block_order_creation(self):
         self.add_to_cart(quantity=1)
         self.client.get(reverse("shop:checkout"))
@@ -233,8 +277,8 @@ class ShopCartOrderTests(TestCase):
             city="Casablanca",
             address="12 Rue Test",
             subtotal=Decimal("120.00"),
-            delivery_fee=Decimal("30.00"),
-            total=Decimal("150.00"),
+            delivery_fee=Decimal("0.00"),
+            total=Decimal("120.00"),
         )
 
         self.assertRegex(order.order_number, r"^VEL-\d{6}$")
@@ -339,8 +383,8 @@ class ProductArchiveTests(TestCase):
             city="Casablanca",
             address="12 Rue Test",
             subtotal=Decimal("120.00"),
-            delivery_fee=Decimal("30.00"),
-            total=Decimal("150.00"),
+            delivery_fee=Decimal("0.00"),
+            total=Decimal("120.00"),
         )
         OrderItem.objects.create(
             order=order,

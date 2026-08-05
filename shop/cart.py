@@ -69,7 +69,7 @@ class Cart:
     def delivery_fee(self):
         if len(self) < 1:
             return Decimal("0.00")
-        return Decimal(str(getattr(settings, "VELQARO_DELIVERY_FEE", "30.00")))
+        return Decimal(str(getattr(settings, "VELQARO_DELIVERY_FEE", "0.00")))
 
     @property
     def total(self):

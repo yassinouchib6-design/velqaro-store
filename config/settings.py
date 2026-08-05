@@ -11,30 +11,93 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
-from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import dotenv_values, load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / ".env")
+ENV_FILE = BASE_DIR / ".env"
+DOTENV_VALUES = dotenv_values(ENV_FILE) if ENV_FILE.exists() else {}
+load_dotenv(ENV_FILE)
+
+
+def env_raw(name, default=None):
+    if name in DOTENV_VALUES:
+        return DOTENV_VALUES.get(name)
+    value = os.environ.get(name)
+    if name == "DEBUG" and isinstance(value, str) and value.strip().lower() == "release":
+        return default
+    return value if value is not None else default
+
+
+def env_bool(name, default=False):
+    value = env_raw(name)
+    if value is None:
+        return default
+    normalized = str(value).strip().strip('"').strip("'").lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ImproperlyConfigured(f"{name} must be a boolean value.")
+
+
+def env_list(name, default=None):
+    value = env_raw(name)
+    if value is None:
+        return list(default or [])
+    return [item.strip() for item in str(value).split(",") if item.strip()]
+
+
+def env_int(name, default):
+    value = env_raw(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except ValueError as exc:
+        raise ImproperlyConfigured(f"{name} must be an integer.") from exc
+
+
+def env_decimal(name, default):
+    value = env_raw(name, str(default))
+    try:
+        return Decimal(str(value))
+    except (InvalidOperation, ValueError) as exc:
+        raise ImproperlyConfigured(f"{name} must be a decimal value.") from exc
+
+
+def env_path(name, default):
+    value = env_raw(name)
+    if not value:
+        return default
+    path = Path(value)
+    if path.is_absolute():
+        return path
+    return BASE_DIR / path
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(&pr(a8$$e$)gfq(n9&h0o_)zsh80wfg(c#*qx_9t(br6#jfg='
+DEBUG = env_bool("DEBUG", True)
+SECRET_KEY = env_raw("SECRET_KEY")
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = "django-insecure-velqaro-local-development-only"
+    else:
+        raise ImproperlyConfigured("SECRET_KEY must be set when DEBUG=False.")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "192.168.11.106",
-]
+ALLOWED_HOSTS = env_list(
+    "ALLOWED_HOSTS",
+    ["127.0.0.1", "localhost", "192.168.11.107"],
+)
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS", [])
 
 
 # Application definition
@@ -129,34 +192,50 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = env_raw("STATIC_URL", "static/")
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = env_path("STATIC_ROOT", BASE_DIR / "staticfiles")
 
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = env_raw("MEDIA_URL", "media/")
+MEDIA_ROOT = env_path("MEDIA_ROOT", BASE_DIR / "media")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-VELQARO_DELIVERY_FEE = '30.00'
+VELQARO_DELIVERY_FEE = env_decimal("VELQARO_DELIVERY_FEE", "0.00")
 
 
-def env_bool(name, default=False):
-    value = os.environ.get(name)
-    if value is None:
-        return default
-    return value.strip().lower() in {"1", "true", "yes", "on"}
-
-
-EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "587"))
+EMAIL_BACKEND = env_raw("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = env_raw("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = env_int("EMAIL_PORT", 587)
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
-EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", "20"))
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-ORDER_NOTIFICATION_EMAIL = os.environ.get("ORDER_NOTIFICATION_EMAIL", "")
+EMAIL_TIMEOUT = env_int("EMAIL_TIMEOUT", 20)
+EMAIL_HOST_USER = env_raw("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env_raw("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = env_raw("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+ORDER_NOTIFICATION_EMAIL = env_raw("ORDER_NOTIFICATION_EMAIL", "")
 
-TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+TELEGRAM_BOT_TOKEN = env_raw("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = env_raw("TELEGRAM_CHAT_ID", "")
+
+SECURE_SSL_REDIRECT = False if DEBUG else env_bool("SECURE_SSL_REDIRECT", True)
+SESSION_COOKIE_SECURE = False if DEBUG else env_bool("SESSION_COOKIE_SECURE", True)
+CSRF_COOKIE_SECURE = False if DEBUG else env_bool("CSRF_COOKIE_SECURE", True)
+SECURE_HSTS_SECONDS = 0 if DEBUG else env_int("SECURE_HSTS_SECONDS", 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False if DEBUG else env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
+SECURE_HSTS_PRELOAD = False if DEBUG else env_bool("SECURE_HSTS_PRELOAD", False)
+SECURE_CONTENT_TYPE_NOSNIFF = False if DEBUG else env_bool("SECURE_CONTENT_TYPE_NOSNIFF", True)
+SECURE_REFERRER_POLICY = env_raw(
+    "SECURE_REFERRER_POLICY",
+    "strict-origin-when-cross-origin" if not DEBUG else "same-origin",
+)
+X_FRAME_OPTIONS = env_raw("X_FRAME_OPTIONS", "DENY" if not DEBUG else "SAMEORIGIN")
+
+SESSION_COOKIE_HTTPONLY = env_bool("SESSION_COOKIE_HTTPONLY", True)
+CSRF_COOKIE_HTTPONLY = env_bool("CSRF_COOKIE_HTTPONLY", False)
+SESSION_COOKIE_SAMESITE = env_raw("SESSION_COOKIE_SAMESITE", "Lax")
+CSRF_COOKIE_SAMESITE = env_raw("CSRF_COOKIE_SAMESITE", "Lax")
+SESSION_COOKIE_AGE = env_int("SESSION_COOKIE_AGE", 1209600)
+
+if not DEBUG and env_bool("USE_X_FORWARDED_PROTO", True):
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

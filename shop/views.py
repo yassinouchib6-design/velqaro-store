@@ -1,5 +1,8 @@
 from uuid import uuid4
 
+import logging
+
+from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import Http404
@@ -8,8 +11,9 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from .cart import Cart
+from .catalog import categories_with_active_product_counts, category_cards, public_categories
 from .forms import CheckoutForm
-from .models import Category, Product
+from .models import Product
 from .services import create_order_from_cart
 
 # Old category slugs kept for backward-compatible redirects after renames.
@@ -17,8 +21,11 @@ LEGACY_CATEGORY_SLUGS = {
     "chains": "chaines",
 }
 
+logger = logging.getLogger(__name__)
+
 
 def home(request):
+    categories = public_categories()
     featured_products = Product.objects.filter(
         is_active=True,
         is_featured=True,
@@ -28,7 +35,6 @@ def home(request):
         is_active=True,
         category__is_active=True,
     ).select_related("category")[:8]
-    categories = Category.objects.filter(is_active=True)
     return render(
         request,
         "shop/home.html",
@@ -36,6 +42,7 @@ def home(request):
             "featured_products": featured_products,
             "latest_products": latest_products,
             "categories": categories,
+            "category_cards": category_cards(categories),
         },
     )
 
@@ -46,13 +53,24 @@ def product_list(request):
         new_slug = LEGACY_CATEGORY_SLUGS[selected_category]
         return redirect(f"{reverse('shop:product_list')}?category={new_slug}", permanent=True)
 
-    categories = Category.objects.filter(is_active=True)
+    categories = public_categories()
+    selected_category_obj = None
     products = Product.objects.filter(
         is_active=True,
         category__is_active=True,
     ).select_related("category")
     if selected_category:
+        selected_category_obj = categories_with_active_product_counts().filter(
+            slug=selected_category
+        ).first()
         products = products.filter(category__slug=selected_category, category__is_active=True)
+
+    empty_title = "Aucun produit disponible pour le moment."
+    empty_message = ""
+    if selected_category_obj and selected_category_obj.active_product_count == 0:
+        empty_title = "Bientôt disponible"
+        empty_message = "De nouveaux produits arrivent prochainement dans cette collection."
+
     return render(
         request,
         "shop/product_list.html",
@@ -60,6 +78,9 @@ def product_list(request):
             "categories": categories,
             "products": products,
             "selected_category": selected_category,
+            "selected_category_obj": selected_category_obj,
+            "empty_title": empty_title,
+            "empty_message": empty_message,
         },
     )
 
@@ -72,6 +93,14 @@ def product_detail(request, slug):
         category__is_active=True,
     )
     return render(request, "shop/product_detail.html", {"product": product})
+
+
+def delivery(request):
+    return render(
+        request,
+        "shop/delivery.html",
+        {"delivery_fee": getattr(settings, "VELQARO_DELIVERY_FEE", "0.00")},
+    )
 
 
 @require_http_methods(["GET", "POST"])
@@ -110,10 +139,16 @@ def checkout(request):
         return redirect("shop:cart")
 
     if request.method == "POST":
+        logger.warning(
+            "TRACE checkout started: cart_items=%s session_has_checkout_token=%s",
+            len(cart_items),
+            bool(request.session.get("checkout_token")),
+        )
         form = CheckoutForm(request.POST)
         session_token = request.session.get("checkout_token")
         posted_token = request.POST.get("checkout_token")
         if not session_token or posted_token != session_token:
+            logger.warning("TRACE checkout stopped: checkout token missing or invalid.")
             messages.error(request, "Cette commande a deja ete traitee ou a expire.")
             return redirect("shop:cart")
 
@@ -121,8 +156,14 @@ def checkout(request):
             try:
                 order = create_order_from_cart(cart, form.cleaned_data)
             except ValidationError as error:
+                logger.exception("TRACE checkout stopped: order creation raised ValidationError.")
                 form.add_error(None, error)
             else:
+                logger.warning(
+                    "TRACE checkout completed: order=%s pk=%s",
+                    order.order_number,
+                    order.pk,
+                )
                 request.session.pop("checkout_token", None)
                 request.session["last_order_number"] = order.order_number
                 request.session["last_order_summary"] = {
@@ -141,6 +182,8 @@ def checkout(request):
                 }
                 cart.clear()
                 return redirect("shop:order_success", order_number=order.order_number)
+        else:
+            logger.warning("TRACE checkout stopped: checkout form is invalid.")
     else:
         token = uuid4().hex
         request.session["checkout_token"] = token

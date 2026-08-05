@@ -52,6 +52,31 @@ const syncHeader = () => {
 syncHeader();
 window.addEventListener("scroll", syncHeader, { passive: true });
 
+const parallaxMedia = document.querySelector("[data-parallax]");
+
+if (parallaxMedia && !prefersReducedMotion) {
+    const maxParallax = 40;
+    let ticking = false;
+
+    const applyParallax = () => {
+        const offset = Math.max(-maxParallax, Math.min(maxParallax, window.scrollY * 0.25));
+        parallaxMedia.style.setProperty("--parallax-y", `${offset.toFixed(1)}px`);
+        ticking = false;
+    };
+
+    applyParallax();
+    window.addEventListener(
+        "scroll",
+        () => {
+            if (!ticking) {
+                requestAnimationFrame(applyParallax);
+                ticking = true;
+            }
+        },
+        { passive: true }
+    );
+}
+
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const mobileMenu = document.querySelector("[data-mobile-menu]");
 
@@ -108,6 +133,32 @@ document.querySelectorAll(".zoom-media").forEach((media) => {
         media.style.setProperty("--zoom-y", `${((event.clientY - rect.top) / rect.height) * 100}%`);
     });
 });
+
+const tiltEnabled = !prefersReducedMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+if (tiltEnabled) {
+    document.querySelectorAll(".product-card").forEach((card) => {
+        const maxTilt = 6;
+
+        const handleTiltMove = (event) => {
+            const rect = card.getBoundingClientRect();
+            const relativeX = (event.clientX - rect.left) / rect.width;
+            const relativeY = (event.clientY - rect.top) / rect.height;
+            const tiltX = (relativeX - 0.5) * maxTilt * 2;
+            const tiltY = (0.5 - relativeY) * maxTilt * 2;
+            card.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+            card.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+        };
+
+        const resetTilt = () => {
+            card.style.setProperty("--tilt-x", "0deg");
+            card.style.setProperty("--tilt-y", "0deg");
+        };
+
+        card.addEventListener("mousemove", handleTiltMove);
+        card.addEventListener("mouseleave", resetTilt);
+    });
+}
 
 document.querySelectorAll(".thumb-row img").forEach((thumb) => {
     thumb.addEventListener("click", () => {

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Livraison | VELQARO{% endblock %}
+{% block meta_description %}Livraison VELQARO partout au Maroc: delais, frais, paiement a la livraison et confirmation de commande.{% endblock %}
+{% block body_class %}store-page delivery-page{% endblock %}
+
+{% block content %}
+<section class="delivery-hero reveal">
+    <div class="delivery-hero-copy">
+        <p class="eyebrow">Livraison</p>
+        <h1>Livraison partout au Maroc</h1>
+        <p>Une commande simple, confirmee par telephone, puis livree directement a votre adresse avec paiement a la reception.</p>
+        <div class="hero-actions">
+            <a class="button button-light" href="{% url 'shop:product_list' %}">Voir la collection</a>
+            <a class="button button-ghost" href="https://wa.me/212763336364" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        </div>
+    </div>
+</section>
+
+<section class="delivery-overview reveal" aria-label="Informations de livraison">
+    <article class="delivery-stat">
+        <span>Zone</span>
+        <strong>Maroc</strong>
+        <p>Nous livrons dans les principales villes et regions du Royaume.</p>
+    </article>
+    <article class="delivery-stat">
+        <span>Delai</span>
+        <strong>24-72h</strong>
+        <p>Le delai peut varier selon la ville et la disponibilite du transporteur.</p>
+    </article>
+    <article class="delivery-stat">
+        <span>Frais</span>
+        <strong>Gratuite</strong>
+        <p>La livraison est offerte partout au Maroc.</p>
+    </article>
+</section>
+
+<section class="delivery-process reveal">
+    <div class="delivery-section-copy">
+        <p class="eyebrow">Paiement a la livraison</p>
+        <h2>Commandez maintenant, payez a la reception.</h2>
+        <p>VELQARO fonctionne actuellement en paiement a la livraison. Aucun paiement en ligne n'est demande sur le site: vous reglez votre commande au moment ou elle vous est remise.</p>
+    </div>
+    <div class="process-list">
+        <article>
+            <span>01</span>
+            <h3>Vous passez commande</h3>
+            <p>Ajoutez vos pieces au panier, renseignez votre nom, telephone, ville et adresse complete.</p>
+        </article>
+        <article>
+            <span>02</span>
+            <h3>Nous confirmons</h3>
+            <p>L'equipe VELQARO vous contacte pour verifier les details, la disponibilite et l'adresse de livraison.</p>
+        </article>
+        <article>
+            <span>03</span>
+            <h3>La commande part en livraison</h3>
+            <p>Apres confirmation, votre colis est prepare et confie au service de livraison.</p>
+        </article>
+        <article>
+            <span>04</span>
+            <h3>Vous payez a reception</h3>
+            <p>Reglez le montant total directement au livreur lorsque votre commande arrive.</p>
+        </article>
+    </div>
+</section>
+
+<section class="delivery-faq reveal">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">FAQ</p>
+            <h2>Questions frequentes</h2>
+        </div>
+    </div>
+    <div class="faq-grid">
+        <article>
+            <h3>Livrez-vous partout au Maroc ?</h3>
+            <p>Oui, VELQARO livre partout au Maroc selon la couverture du transporteur disponible pour votre ville.</p>
+        </article>
+        <article>
+            <h3>Quel est le delai de livraison ?</h3>
+            <p>Le delai habituel est de 24 a 72 heures apres confirmation de votre commande. Certaines zones peuvent demander plus de temps.</p>
+        </article>
+        <article>
+            <h3>Combien coute la livraison ?</h3>
+            <p>La livraison est gratuite. Aucun frais de livraison n'est ajoute au panier ou au checkout.</p>
+        </article>
+        <article>
+            <h3>Puis-je payer en ligne ?</h3>
+            <p>Non. Pour le moment, VELQARO utilise uniquement le paiement a la livraison.</p>
+        </article>
+        <article>
+            <h3>Pourquoi dois-je confirmer par telephone ?</h3>
+            <p>La confirmation permet d'eviter les erreurs d'adresse, de verifier les articles choisis et de preparer une livraison propre.</p>
+        </article>
+        <article>
+            <h3>Comment suivre ma commande ?</h3>
+            <p>Contactez-nous sur WhatsApp ou Instagram avec votre nom et votre numero de commande.</p>
+        </article>
+    </div>
+</section>
+
+<section class="delivery-contact reveal">
+    <div>
+        <p class="eyebrow">Besoin d'aide ?</p>
+        <h2>Contactez VELQARO</h2>
+        <p>Notre equipe peut vous aider a choisir une piece, confirmer une adresse ou suivre une commande en cours.</p>
+    </div>
+    <div class="delivery-contact-actions">
+        <a class="button button-light" href="https://wa.me/212763336364" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a class="button button-ghost" href="https://www.instagram.com/velqaro.ma_/" target="_blank" rel="noopener noreferrer">Instagram</a>
+    </div>
+</section>
+{% endblock %}

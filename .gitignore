@@ -20,9 +20,18 @@ ENV/
 db.sqlite3
 db.sqlite3-journal
 backups/
+*.sqlite3.bak
+*.sqlite3.backup
+*.db.bak
 staticfiles/
 local_settings.py
 *.log
+
+# Test / coverage cache
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
 
 # Node / frontend tooling (in case any gets added later)
 node_modules/

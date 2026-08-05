@@ -1,4 +1,4 @@
-<article class="product-card luxury-product">
+<article class="product-card luxury-product reveal" style="--stagger: {{ forloop.counter0|default:0 }};">
     <a href="{% url 'shop:product_detail' product.slug %}" class="product-media" aria-label="Voir {{ product.name }}">
         {% if product.main_image %}
             <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="lazy">

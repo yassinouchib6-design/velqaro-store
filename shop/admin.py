@@ -84,7 +84,9 @@ class OrderAdmin(admin.ModelAdmin):
         "full_name",
         "phone",
         "city",
-        "total",
+        "subtotal",
+        "delivery_display",
+        "total_display",
         "status",
         "tracking_number",
         "created_at",
@@ -100,6 +102,14 @@ class OrderAdmin(admin.ModelAdmin):
         mark_as(Order.Status.DELIVERED),
         mark_as(Order.Status.CANCELLED),
     ]
+
+    @admin.display(description="Livraison")
+    def delivery_display(self, obj):
+        return "Gratuite"
+
+    @admin.display(description="Total", ordering="subtotal")
+    def total_display(self, obj):
+        return f"{obj.subtotal} DH"
 
 
 @admin.register(ProductImage)
