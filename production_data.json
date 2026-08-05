@@ -33,7 +33,7 @@
   "model": "shop.category",
   "pk": 10,
   "fields": {
-    "name": "Chaînes",
+    "name": "ChaÃ®nes",
     "slug": "chaines",
     "is_active": true,
     "created_at": "2026-08-02T17:45:34.214Z"
@@ -74,7 +74,7 @@
     "material": "316L Stainless Steel",
     "color": "Silver",
     "stock": 5,
-    "main_image": "products/main/télécharger_6.jpg",
+    "main_image": "products/main/tÃ©lÃ©charger_6.jpg",
     "is_active": true,
     "is_featured": true,
     "created_at": "2026-07-19T00:50:36.589Z",
