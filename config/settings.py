@@ -126,6 +126,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+if not DEBUG:
+    MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
+
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -150,12 +153,28 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = env_raw("DATABASE_URL", "")
+if DATABASE_URL:
+    try:
+        import dj_database_url
+    except ImportError as exc:
+        raise ImproperlyConfigured("dj-database-url is required when DATABASE_URL is set.") from exc
+
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=env_int("DATABASE_CONN_MAX_AGE", 600),
+            conn_health_checks=env_bool("DATABASE_CONN_HEALTH_CHECKS", True),
+            ssl_require=env_bool("DATABASE_SSL_REQUIRE", not DEBUG),
+        )
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
@@ -195,6 +214,16 @@ USE_TZ = True
 STATIC_URL = env_raw("STATIC_URL", "static/")
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = env_path("STATIC_ROOT", BASE_DIR / "staticfiles")
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+if not DEBUG:
+    STORAGES["staticfiles"]["BACKEND"] = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL = env_raw("MEDIA_URL", "media/")
 MEDIA_ROOT = env_path("MEDIA_ROOT", BASE_DIR / "media")

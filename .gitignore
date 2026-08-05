@@ -48,3 +48,7 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local deployment backups
+db_before_deployment.sqlite3
+media_backup/
