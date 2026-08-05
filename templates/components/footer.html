@@ -1,11 +1,11 @@
 <footer id="contact" class="site-footer">
     <div class="footer-brand">
-        <p>VELQARO</p>
-        <span>Accessoires masculins en acier 316L, livres partout au Maroc. Presence forte, details precis.</span>
+        <p>{{ store_config.name }}</p>
+        <span>{{ store_config.tagline }}</span>
     </div>
     <div class="footer-links">
-        <a href="https://www.instagram.com/velqaro.ma_/" target="_blank" rel="noopener noreferrer">Instagram</a>
-        <a href="https://wa.me/212763336364" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a href="{{ store_config.instagram_url }}" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="{{ store_config.whatsapp_url }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
         {% for category in public_categories %}
             <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
         {% endfor %}

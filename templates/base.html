@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}VELQARO{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}VELQARO - Accessoires masculins premium en acier 316L, livres partout au Maroc.{% endblock %}">
-    <meta property="og:site_name" content="VELQARO">
-    <meta property="og:title" content="{% block og_title %}VELQARO{% endblock %}">
+    <title>{% block title %}{{ store_config.name }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ store_config.meta_description }}{% endblock %}">
+    <meta property="og:site_name" content="{{ store_config.name }}">
+    <meta property="og:title" content="{% block og_title %}{{ store_config.name }}{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Accessoires masculins premium en acier 316L, livres partout au Maroc.{% endblock %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <script src="{% static 'js/main.js' %}" defer></script>

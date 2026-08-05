@@ -1,7 +1,5 @@
 from decimal import Decimal
 
-import logging
-
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -9,8 +7,6 @@ from django.db.models import F
 
 from .models import Order, OrderItem, Product
 from .notifications import schedule_order_notification
-
-logger = logging.getLogger(__name__)
 
 
 def get_delivery_fee():
@@ -54,7 +50,6 @@ def create_order_from_cart(cart, cleaned_data):
         delivery_fee=delivery_fee,
         total=subtotal + delivery_fee,
     )
-    logger.warning("TRACE order created: order=%s pk=%s", order.order_number, order.pk)
 
     for product, quantity, item_subtotal in checked_items:
         updated = Product.objects.filter(pk=product.pk, stock__gte=quantity).update(
@@ -71,6 +66,5 @@ def create_order_from_cart(cart, cleaned_data):
             subtotal=item_subtotal,
         )
 
-    logger.warning("TRACE registering order notifications: order=%s pk=%s", order.order_number, order.pk)
     schedule_order_notification(order)
     return order

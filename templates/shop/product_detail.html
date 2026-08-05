@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ product.name }} | VELQARO{% endblock %}
+{% block title %}{{ product.name }} | {{ store_config.name }}{% endblock %}
 {% block body_class %}store-page product-page{% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
             {% if product.main_image %}
                 <img src="{{ product.main_image.url }}" alt="{{ product.name }}" loading="eager">
             {% else %}
-                <span class="image-placeholder">VELQARO</span>
+                <span class="image-placeholder">{{ store_config.name }}</span>
             {% endif %}
         </div>
         {% if product.images.all %}
@@ -28,8 +28,8 @@
         <h1>{{ product.name }}</h1>
         <p>{{ product.short_description }}</p>
         <div class="price-row large">
-            <strong>{{ product.price }} DH</strong>
-            {% if product.old_price %}<span>{{ product.old_price }} DH</span>{% endif %}
+            <strong>{{ product.price }} {{ store_config.currency }}</strong>
+            {% if product.old_price %}<span>{{ product.old_price }} {{ store_config.currency }}</span>{% endif %}
         </div>
         <dl class="specs">
             <div><dt>Mati&egrave;re</dt><dd>{{ product.material }}</dd></div>

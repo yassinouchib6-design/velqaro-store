@@ -1,9 +1,10 @@
 from django.contrib import admin
+from django.conf import settings
 
 from .models import Category, Order, OrderItem, Product, ProductImage
 
-admin.site.site_header = "VELQARO Admin"
-admin.site.site_title = "VELQARO Admin"
+admin.site.site_header = f"{settings.STORE_NAME} Admin"
+admin.site.site_title = f"{settings.STORE_NAME} Admin"
 admin.site.index_title = "Gestion de la boutique"
 
 
@@ -105,11 +106,11 @@ class OrderAdmin(admin.ModelAdmin):
 
     @admin.display(description="Livraison")
     def delivery_display(self, obj):
-        return "Gratuite"
+        return settings.STORE_FREE_DELIVERY_LABEL
 
     @admin.display(description="Total", ordering="subtotal")
     def total_display(self, obj):
-        return f"{obj.subtotal} DH"
+        return f"{obj.subtotal} {settings.STORE_CURRENCY_LABEL}"
 
 
 @admin.register(ProductImage)

@@ -1,7 +1,7 @@
 <header class="site-header" data-header>
     <div class="nav-shell">
-        <a class="brand" href="{% url 'shop:home' %}" aria-label="VELQARO home">
-            <span>VELQARO</span>
+        <a class="brand" href="{% url 'shop:home' %}" aria-label="{{ store_config.name }} home">
+            <span>{{ store_config.name }}</span>
         </a>
 
         <button class="icon-button menu-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" data-menu-toggle>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}Livraison | VELQARO{% endblock %}
-{% block meta_description %}Livraison VELQARO partout au Maroc: delais, frais, paiement a la livraison et confirmation de commande.{% endblock %}
+{% block title %}Livraison | {{ store_config.name }}{% endblock %}
+{% block meta_description %}Livraison {{ store_config.name }} partout au Maroc: delais, frais, paiement a la livraison et confirmation de commande.{% endblock %}
 {% block body_class %}store-page delivery-page{% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@
         <p>Une commande simple, confirmee par telephone, puis livree directement a votre adresse avec paiement a la reception.</p>
         <div class="hero-actions">
             <a class="button button-light" href="{% url 'shop:product_list' %}">Voir la collection</a>
-            <a class="button button-ghost" href="https://wa.me/212763336364" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            <a class="button button-ghost" href="{{ store_config.whatsapp_url }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
         </div>
     </div>
 </section>
@@ -30,7 +30,7 @@
     </article>
     <article class="delivery-stat">
         <span>Frais</span>
-        <strong>Gratuite</strong>
+        <strong>{{ store_config.free_delivery_label }}</strong>
         <p>La livraison est offerte partout au Maroc.</p>
     </article>
 </section>
@@ -39,7 +39,7 @@
     <div class="delivery-section-copy">
         <p class="eyebrow">Paiement a la livraison</p>
         <h2>Commandez maintenant, payez a la reception.</h2>
-        <p>VELQARO fonctionne actuellement en paiement a la livraison. Aucun paiement en ligne n'est demande sur le site: vous reglez votre commande au moment ou elle vous est remise.</p>
+        <p>{{ store_config.name }} fonctionne actuellement en paiement a la livraison. Aucun paiement en ligne n'est demande sur le site: vous reglez votre commande au moment ou elle vous est remise.</p>
     </div>
     <div class="process-list">
         <article>
@@ -50,7 +50,7 @@
         <article>
             <span>02</span>
             <h3>Nous confirmons</h3>
-            <p>L'equipe VELQARO vous contacte pour verifier les details, la disponibilite et l'adresse de livraison.</p>
+            <p>L'equipe {{ store_config.name }} vous contacte pour verifier les details, la disponibilite et l'adresse de livraison.</p>
         </article>
         <article>
             <span>03</span>
@@ -75,7 +75,7 @@
     <div class="faq-grid">
         <article>
             <h3>Livrez-vous partout au Maroc ?</h3>
-            <p>Oui, VELQARO livre partout au Maroc selon la couverture du transporteur disponible pour votre ville.</p>
+            <p>Oui, {{ store_config.name }} livre partout au Maroc selon la couverture du transporteur disponible pour votre ville.</p>
         </article>
         <article>
             <h3>Quel est le delai de livraison ?</h3>
@@ -87,7 +87,7 @@
         </article>
         <article>
             <h3>Puis-je payer en ligne ?</h3>
-            <p>Non. Pour le moment, VELQARO utilise uniquement le paiement a la livraison.</p>
+            <p>Non. Pour le moment, {{ store_config.name }} utilise uniquement le paiement a la livraison.</p>
         </article>
         <article>
             <h3>Pourquoi dois-je confirmer par telephone ?</h3>
@@ -103,12 +103,12 @@
 <section class="delivery-contact reveal">
     <div>
         <p class="eyebrow">Besoin d'aide ?</p>
-        <h2>Contactez VELQARO</h2>
+        <h2>Contactez {{ store_config.name }}</h2>
         <p>Notre equipe peut vous aider a choisir une piece, confirmer une adresse ou suivre une commande en cours.</p>
     </div>
     <div class="delivery-contact-actions">
-        <a class="button button-light" href="https://wa.me/212763336364" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-        <a class="button button-ghost" href="https://www.instagram.com/velqaro.ma_/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a class="button button-light" href="{{ store_config.whatsapp_url }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a class="button button-ghost" href="{{ store_config.instagram_url }}" target="_blank" rel="noopener noreferrer">Instagram</a>
     </div>
 </section>
 {% endblock %}

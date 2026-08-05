@@ -3,7 +3,7 @@
         {% if item.product.main_image %}
             <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}" loading="lazy">
         {% else %}
-            <span class="image-placeholder">VELQARO</span>
+            <span class="image-placeholder">{{ store_config.name }}</span>
         {% endif %}
     </a>
 
@@ -23,7 +23,7 @@
     <div class="cart-item-actions">
         <div class="cart-item-price">
             <span>Prix unite</span>
-            <strong>{{ item.product.price }} DH</strong>
+            <strong>{{ item.product.price }} {{ store_config.currency }}</strong>
         </div>
 
         <form method="post" action="{% url 'shop:cart' %}" class="quantity-selector cart-quantity" data-quantity-form>
@@ -35,7 +35,7 @@
 
         <div class="cart-item-subtotal">
             <span>Sous-total</span>
-            <strong>{{ item.subtotal }} DH</strong>
+            <strong>{{ item.subtotal }} {{ store_config.currency }}</strong>
         </div>
 
         <form method="post" action="{% url 'shop:cart' %}" class="cart-remove-form">

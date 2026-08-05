@@ -20,19 +20,14 @@ TELEGRAM_ERROR_BODY_LIMIT = 500
 
 def schedule_order_notification(order):
     order_id = order.pk
-    order_number = order.order_number
 
     def send_email_after_commit():
-        logger.warning("TRACE notification callback executed: email order=%s pk=%s", order_number, order_id)
         return send_new_order_notification(order_id)
 
     def send_telegram_after_commit():
-        logger.warning("TRACE notification callback executed: telegram order=%s pk=%s", order_number, order_id)
         return send_new_order_telegram_notification(order_id)
 
-    logger.warning("TRACE notification callback registered: email order=%s pk=%s", order_number, order_id)
     transaction.on_commit(send_email_after_commit)
-    logger.warning("TRACE notification callback registered: telegram order=%s pk=%s", order_number, order_id)
     transaction.on_commit(send_telegram_after_commit)
 
 
@@ -53,7 +48,7 @@ def send_new_order_notification(order_id):
                 return False
 
             send_mail(
-                subject=f"Nouvelle commande VELQARO #{order.order_number}",
+                subject=f"Nouvelle commande {settings.STORE_NAME} #{order.order_number}",
                 message=build_order_notification_body(order),
                 from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
                 recipient_list=[recipient],
@@ -69,12 +64,10 @@ def send_new_order_notification(order_id):
 
 
 def send_new_order_telegram_notification(order_id):
-    logger.warning("TRACE telegram function entered: order_id=%s", order_id)
     try:
         with transaction.atomic():
             order = Order.objects.select_for_update().get(pk=order_id)
             if order.telegram_notification_sent_at:
-                logger.warning("TRACE telegram stopped: order=%s already marked sent.", order.order_number)
                 return False
 
             sent = send_telegram_message(
@@ -82,12 +75,10 @@ def send_new_order_telegram_notification(order_id):
                 context=f"order {order.order_number}",
             )
             if not sent:
-                logger.warning("TRACE telegram stopped: API send returned False for order=%s.", order.order_number)
                 return False
 
             order.telegram_notification_sent_at = timezone.now()
             order.save(update_fields=["telegram_notification_sent_at", "updated_at"])
-            logger.warning("TRACE telegram timestamp saved: order=%s", order.order_number)
             return True
     except Exception:
         logger.exception("Failed to send Telegram notification for order id %s.", order_id)
@@ -97,7 +88,7 @@ def send_new_order_telegram_notification(order_id):
 def send_telegram_message(text, context="manual test"):
     bot_token = getattr(settings, "TELEGRAM_BOT_TOKEN", "")
     chat_id = getattr(settings, "TELEGRAM_CHAT_ID", "")
-    logger.warning(
+    logger.info(
         "Telegram notification started for %s. token_configured=%s chat_id_configured=%s",
         context,
         bool(bot_token),
@@ -117,7 +108,6 @@ def send_telegram_message(text, context="manual test"):
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    logger.warning("TRACE Telegram API request sent for %s.", context)
     try:
         with urlopen(request, timeout=TELEGRAM_REQUEST_TIMEOUT) as response:
             status_code = _response_status_code(response)
@@ -130,7 +120,6 @@ def send_telegram_message(text, context="manual test"):
             error.code,
             _telegram_error_message(response_body),
         )
-        logger.warning("TRACE Telegram failure: HTTPError for %s.", context)
         return False
     except TimeoutError:
         logger.exception(
@@ -138,7 +127,6 @@ def send_telegram_message(text, context="manual test"):
             context,
             TELEGRAM_REQUEST_TIMEOUT,
         )
-        logger.warning("TRACE Telegram failure: timeout for %s.", context)
         return False
     except URLError as error:
         logger.exception(
@@ -146,7 +134,6 @@ def send_telegram_message(text, context="manual test"):
             context,
             _safe_error_text(error.reason),
         )
-        logger.warning("TRACE Telegram failure: URLError for %s.", context)
         return False
     except OSError as error:
         logger.exception(
@@ -154,7 +141,6 @@ def send_telegram_message(text, context="manual test"):
             context,
             _safe_error_text(error),
         )
-        logger.warning("TRACE Telegram failure: OSError for %s.", context)
         return False
 
     if response_body:
@@ -169,7 +155,6 @@ def send_telegram_message(text, context="manual test"):
                 status_code,
                 _telegram_error_message(response_body),
             )
-            logger.warning("TRACE Telegram failure: API ok=false for %s.", context)
             return False
 
     logger.info(
@@ -177,7 +162,6 @@ def send_telegram_message(text, context="manual test"):
         context,
         status_code,
     )
-    logger.warning("TRACE Telegram success: context=%s status_code=%s", context, status_code)
     return True
 
 
@@ -226,18 +210,18 @@ def _safe_error_text(error):
 
 def build_order_telegram_message(order):
     return (
-        f"Nouvelle commande VELQARO #{order.order_number}\n"
+        f"Nouvelle commande {settings.STORE_NAME} #{order.order_number}\n"
         f"Client: {order.full_name}\n"
         f"Telephone: {order.phone}\n"
         f"Ville: {order.city}\n"
-        f"Livraison : Gratuite\n"
-        f"Total: {order.total} DH"
+        f"Livraison : {settings.STORE_FREE_DELIVERY_LABEL}\n"
+        f"Total: {order.total} {settings.STORE_CURRENCY_LABEL}"
     )
 
 
 def build_order_notification_body(order):
     ordered_products = "\n".join(
-        f"- {item.product_name} x {item.quantity} | Unit price: {item.unit_price} DH | Subtotal: {item.subtotal} DH"
+        f"- {item.product_name} x {item.quantity} | Unit price: {item.unit_price} {settings.STORE_CURRENCY_LABEL} | Subtotal: {item.subtotal} {settings.STORE_CURRENCY_LABEL}"
         for item in order.items.all()
     )
     order_date = timezone.localtime(order.created_at).strftime("%Y-%m-%d %H:%M")
@@ -248,7 +232,7 @@ def build_order_notification_body(order):
         f"City: {order.city}\n"
         f"Full address: {order.address}\n"
         f"Ordered products with quantities:\n{ordered_products}\n"
-        f"Livraison : Gratuite\n"
-        f"Total amount: {order.total} DH\n"
+        f"Livraison : {settings.STORE_FREE_DELIVERY_LABEL}\n"
+        f"Total amount: {order.total} {settings.STORE_CURRENCY_LABEL}\n"
         f"Order date: {order_date}\n"
     )

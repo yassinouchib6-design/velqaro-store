@@ -1,8 +1,5 @@
 from uuid import uuid4
 
-import logging
-
-from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import Http404
@@ -20,9 +17,6 @@ from .services import create_order_from_cart
 LEGACY_CATEGORY_SLUGS = {
     "chains": "chaines",
 }
-
-logger = logging.getLogger(__name__)
-
 
 def home(request):
     categories = public_categories()
@@ -96,11 +90,7 @@ def product_detail(request, slug):
 
 
 def delivery(request):
-    return render(
-        request,
-        "shop/delivery.html",
-        {"delivery_fee": getattr(settings, "VELQARO_DELIVERY_FEE", "0.00")},
-    )
+    return render(request, "shop/delivery.html")
 
 
 @require_http_methods(["GET", "POST"])
@@ -139,16 +129,10 @@ def checkout(request):
         return redirect("shop:cart")
 
     if request.method == "POST":
-        logger.warning(
-            "TRACE checkout started: cart_items=%s session_has_checkout_token=%s",
-            len(cart_items),
-            bool(request.session.get("checkout_token")),
-        )
         form = CheckoutForm(request.POST)
         session_token = request.session.get("checkout_token")
         posted_token = request.POST.get("checkout_token")
         if not session_token or posted_token != session_token:
-            logger.warning("TRACE checkout stopped: checkout token missing or invalid.")
             messages.error(request, "Cette commande a deja ete traitee ou a expire.")
             return redirect("shop:cart")
 
@@ -156,14 +140,8 @@ def checkout(request):
             try:
                 order = create_order_from_cart(cart, form.cleaned_data)
             except ValidationError as error:
-                logger.exception("TRACE checkout stopped: order creation raised ValidationError.")
                 form.add_error(None, error)
             else:
-                logger.warning(
-                    "TRACE checkout completed: order=%s pk=%s",
-                    order.order_number,
-                    order.pk,
-                )
                 request.session.pop("checkout_token", None)
                 request.session["last_order_number"] = order.order_number
                 request.session["last_order_summary"] = {
@@ -182,8 +160,6 @@ def checkout(request):
                 }
                 cart.clear()
                 return redirect("shop:order_success", order_number=order.order_number)
-        else:
-            logger.warning("TRACE checkout stopped: checkout form is invalid.")
     else:
         token = uuid4().hex
         request.session["checkout_token"] = token

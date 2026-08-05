@@ -23,8 +23,8 @@ class Command(BaseCommand):
 
         try:
             sent = send_mail(
-                subject="Test email VELQARO",
-                message="This is a VELQARO order notification SMTP test.",
+                subject=f"Test email {settings.STORE_NAME}",
+                message=f"This is a {settings.STORE_NAME} order notification SMTP test.",
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[settings.ORDER_NOTIFICATION_EMAIL],
                 fail_silently=False,

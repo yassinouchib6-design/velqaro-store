@@ -203,6 +203,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 VELQARO_DELIVERY_FEE = env_decimal("VELQARO_DELIVERY_FEE", "0.00")
 
+STORE_NAME = env_raw("STORE_NAME", "VELQARO")
+STORE_TAGLINE = env_raw(
+    "STORE_TAGLINE",
+    "Accessoires masculins en acier 316L, livres partout au Maroc. Presence forte, details precis.",
+)
+STORE_META_DESCRIPTION = env_raw(
+    "STORE_META_DESCRIPTION",
+    "VELQARO - Accessoires masculins premium en acier 316L, livres partout au Maroc.",
+)
+STORE_CURRENCY_LABEL = env_raw("STORE_CURRENCY_LABEL", "DH")
+STORE_FREE_DELIVERY_LABEL = env_raw("STORE_FREE_DELIVERY_LABEL", "Gratuite")
+STORE_WHATSAPP_URL = env_raw("STORE_WHATSAPP_URL", "https://wa.me/212763336364")
+STORE_INSTAGRAM_URL = env_raw("STORE_INSTAGRAM_URL", "https://www.instagram.com/velqaro.ma_/")
+STORE_INSTAGRAM_HANDLE = env_raw("STORE_INSTAGRAM_HANDLE", "@velqaro.ma")
+
 
 EMAIL_BACKEND = env_raw("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = env_raw("EMAIL_HOST", "smtp.gmail.com")

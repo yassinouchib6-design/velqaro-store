@@ -3,7 +3,7 @@
     <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <button class="icon-button modal-close" type="button" aria-label="Fermer" data-modal-close>×</button>
         <div class="modal-content">
-            <h2 id="modal-title">{{ modal_title|default:"VELQARO" }}</h2>
+            <h2 id="modal-title">{{ modal_title|default:store_config.name }}</h2>
             {% if modal_body %}<p>{{ modal_body }}</p>{% endif %}
         </div>
     </section>

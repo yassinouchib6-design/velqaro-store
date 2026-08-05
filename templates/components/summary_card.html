@@ -2,9 +2,9 @@
     {% if mode == "cart" %}
         <span class="summary-label">Recapitulatif</span>
         <p>Articles <strong>{{ cart_count }}</strong></p>
-        <p>Sous-total <strong>{{ cart.subtotal }} DH</strong></p>
-        <p>Livraison : <strong>Gratuite</strong></p>
-        <p class="summary-total">Total <strong>{{ cart.total }} DH</strong></p>
+        <p>Sous-total <strong>{{ cart.subtotal }} {{ store_config.currency }}</strong></p>
+        <p>Livraison : <strong>{{ store_config.free_delivery_label }}</strong></p>
+        <p class="summary-total">Total <strong>{{ cart.total }} {{ store_config.currency }}</strong></p>
         <a class="button button-dark button-full" href="{% url 'shop:checkout' %}">Passer la commande</a>
         <a class="summary-link" href="{% url 'shop:product_list' %}">Continuer mes achats</a>
         <div class="cart-trust">
@@ -15,19 +15,19 @@
     {% elif mode == "checkout" %}
         <span class="summary-label">Votre selection</span>
         {% for item in cart_items %}
-            <p>{{ item.product.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} DH</strong></p>
+            <p>{{ item.product.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} {{ store_config.currency }}</strong></p>
         {% endfor %}
-        <p>Sous-total <strong>{{ cart.subtotal }} DH</strong></p>
-        <p>Livraison : <strong>Gratuite</strong></p>
-        <p class="summary-total">Total <strong>{{ cart.total }} DH</strong></p>
+        <p>Sous-total <strong>{{ cart.subtotal }} {{ store_config.currency }}</strong></p>
+        <p>Livraison : <strong>{{ store_config.free_delivery_label }}</strong></p>
+        <p class="summary-total">Total <strong>{{ cart.total }} {{ store_config.currency }}</strong></p>
         <small>Votre commande sera validee apres confirmation.</small>
     {% elif mode == "success" %}
         <span class="summary-label">Recapitulatif</span>
         {% for item in summary.items %}
-            <p>{{ item.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} DH</strong></p>
+            <p>{{ item.name }} x {{ item.quantity }} <strong>{{ item.subtotal }} {{ store_config.currency }}</strong></p>
         {% endfor %}
-        <p>Sous-total <strong>{{ summary.subtotal }} DH</strong></p>
-        <p>Livraison : <strong>Gratuite</strong></p>
-        <p class="summary-total">Total <strong>{{ summary.total }} DH</strong></p>
+        <p>Sous-total <strong>{{ summary.subtotal }} {{ store_config.currency }}</strong></p>
+        <p>Livraison : <strong>{{ store_config.free_delivery_label }}</strong></p>
+        <p class="summary-total">Total <strong>{{ summary.total }} {{ store_config.currency }}</strong></p>
     {% endif %}
 </aside>

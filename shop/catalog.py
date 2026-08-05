@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db.models import Count, Q
 
 from .models import Category
@@ -39,7 +40,7 @@ def category_cards(categories):
             category.slug,
             {
                 "image_path": "img/category-rings.png",
-                "description": "Selection VELQARO disponible maintenant.",
+                "description": f"Selection {settings.STORE_NAME} disponible maintenant.",
             },
         )
         cards.append(
@@ -48,7 +49,7 @@ def category_cards(categories):
                 "title": category.name,
                 "image_path": meta["image_path"],
                 "description": meta["description"],
-                "alt": f"{category.name} VELQARO",
+                "alt": f"{category.name} {settings.STORE_NAME}",
             }
         )
     return cards
