@@ -13,7 +13,24 @@
             <a href="{% url 'shop:home' %}">Accueil</a>
             <a href="{% url 'shop:product_list' %}">Boutique</a>
             {% for category in public_categories %}
-                <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+                {% if category.slug == "bracelets" %}
+                    <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+                {% endif %}
+            {% endfor %}
+            {% for category in public_categories %}
+                {% if category.slug == "portefeuilles" %}
+                    <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+                {% endif %}
+            {% endfor %}
+            {% for category in public_categories %}
+                {% if category.slug == "chaines" %}
+                    <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+                {% endif %}
+            {% endfor %}
+            {% for category in public_categories %}
+                {% if category.slug == "packs" %}
+                    <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+                {% endif %}
             {% endfor %}
             <a href="#contact">Contact</a>
         </nav>
