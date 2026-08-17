@@ -6,9 +6,6 @@
     <div class="footer-links">
         <a href="{{ store_config.instagram_url }}" target="_blank" rel="noopener noreferrer">Instagram</a>
         <a href="{{ store_config.whatsapp_url }}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-        {% for category in public_categories %}
-            <a href="{% url 'shop:product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
-        {% endfor %}
         <a href="{% url 'shop:delivery' %}">Livraison</a>
     </div>
 </footer>
